@@ -13,6 +13,8 @@ npm install
 
 npx expo install expo-router react-native-safe-area-context react-native-screens expo-linking expo-constants expo-status-bar
 
+
+
 *Tailwind:*
 
 
@@ -21,6 +23,8 @@ npm install nativewind
 
 npm install --save-dev tailwindcss@3.3.2
 
+
+
 *Firebase:*
 
 
@@ -28,6 +32,8 @@ npm install firebase
 
 
 npm install -g firebase-tools
+
+
 
 
 *Existing users: (when receiving updated files)*
@@ -52,6 +58,8 @@ npm install firebase
 
 
 npm install -g firebase-tools
+
+
 
 *To run the program:*
 
