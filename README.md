@@ -4,10 +4,10 @@
 Download ExpoGo from app store
 
 
-Installing dependencies:
+**Installing dependencies:**
 
 
-Node & Expo:
+*Node & Expo:*
 
 
 npm install
@@ -15,7 +15,7 @@ npm install
 
 npx expo install expo-router react-native-safe-area-context react-native-screens expo-linking expo-constants expo-status-bar
 
-Tailwind:
+*Tailwind:*
 
 
 npm install nativewind
@@ -23,7 +23,7 @@ npm install nativewind
 
 npm install --save-dev tailwindcss@3.3.2
 
-Firebase:
+*Firebase:*
 
 
 npm install firebase
@@ -32,16 +32,30 @@ npm install firebase
 npm install -g firebase-tools
 
 
-Existing users: (when receiving updated files)
+*Existing users: (when receiving updated files)*
+
+
 rm -rf node_modules
+
+
 rm package-lock.json yarn.lock
+
+
 npm install
+
+
 npm install nativewind
+
+
 npm install --save-dev tailwindcss@3.3.2
+
+
 npm install firebase
+
+
 npm install -g firebase-tools
 
-To run the program:
+*To run the program:*
 
 
 npx expo start
