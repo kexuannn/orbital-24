@@ -1,4 +1,4 @@
-# orbital-24
+# orbital-24 :mouse:
 Download ExpoGo from app store
 
 Installing dependencies:
