@@ -1,4 +1,4 @@
-# orbital-24 :mouse:
+:dancers: # orbital-24 :mouse: :hamster:
 Download ExpoGo from app store
 
 Installing dependencies:
