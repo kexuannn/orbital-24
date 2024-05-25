@@ -3,8 +3,9 @@
 
 Download ExpoGo from app store
 
-
-**Installing dependencies:**
+```diff
+@@Installing dependencies:@@
+```
 
 
 *Node & Expo:*
