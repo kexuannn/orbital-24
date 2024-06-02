@@ -1,4 +1,3 @@
-```markdown
 # Orbital-24 🐭 🐹
 
 ## Getting Started
@@ -52,5 +51,3 @@ npx expo start
 
 This will generate a QR code. Use your camera to scan the code and be redirected to the Expo Go app. Here you can interact with the app.
 ```
-
-By following these steps, you’ll have your updated README in your GitHub repository.
