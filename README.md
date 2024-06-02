@@ -6,7 +6,8 @@
 
 - Download **Expo Go** from the app store.
 
-### Installing Dependencies
+
+### Installing Dependencies (For new users! Scroll down for instructions for existing users)
 
 #### Node & Expo
 
