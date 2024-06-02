@@ -1,69 +1,56 @@
-:dancers: # orbital-24 :mouse: :hamster:
+```markdown
+# Orbital-24 🐭 🐹
 
+## Getting Started
 
-Download ExpoGo from app store
+### Prerequisites
 
+- Download **Expo Go** from the app store.
 
-**Installing dependencies:**
+### Installing Dependencies
 
+#### Node & Expo
 
-
-*Node & Expo:*
-
+```bash
 npm install
-
 npx expo install expo-router react-native-safe-area-context react-native-screens expo-linking expo-constants expo-status-bar
+```
 
+#### Tailwind CSS
 
-
-*Tailwind:*
-
-
+```bash
 npm install nativewind
-
-
 npm install --save-dev tailwindcss@3.3.2
+```
 
+#### Firebase
 
-
-*Firebase:*
-
-
+```bash
 npm install firebase
-
-
 npm install -g firebase-tools
+```
 
+### Updating Existing Users
 
+When receiving updated files:
 
-
-*Existing users: (when receiving updated files)*
-
-
+```bash
 rm -rf node_modules
-
-
 rm package-lock.json yarn.lock
-
-
 npm install
-
-
 npm install nativewind
-
-
 npm install --save-dev tailwindcss@3.3.2
-
-
 npm install firebase
-
-
 npm install -g firebase-tools
+```
 
+### Running the Program
 
-
-*To run the program:*
-
-
+```bash
 npx expo start
-(this generates a qr code, use camera to scan and be redirected to the expo go app. Here you can interact with the app)
+```
+
+This will generate a QR code. Use your camera to scan the code and be redirected to the Expo Go app. Here you can interact with the app.
+```
+
+By following these steps, you’ll have your updated README in your GitHub repository.
