@@ -29,7 +29,7 @@ npm install firebase
 npm install -g firebase-tools
 ```
 
-### Updating Existing Users
+### For Existing Users
 
 When receiving updated files:
 
