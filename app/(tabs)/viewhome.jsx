@@ -49,7 +49,7 @@ const viewHome = () => {
 
       const docRef = doc(db, 'shelters', id);
 
-      // Get the document snapshot
+
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists) {
@@ -103,7 +103,6 @@ const viewHome = () => {
             updatedBookmarkedPets = [...bookmarkedPets, postId];
           }
         } else {
-          // Initialize bookmarkedPets as an array with the postId
           await updateDoc(userDocRef, {
             bookmarkedPets: [postId],
           });
@@ -213,6 +212,12 @@ const viewHome = () => {
                   </Text>
                   <Text className="text-darkBrown font-pregular text-lg ml-3">
                     {p.data.caption}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text className="text-darkBrown font-pregular text-lg ml-2">
+                      status: {p.data.status}
                   </Text>
                 </View>
 

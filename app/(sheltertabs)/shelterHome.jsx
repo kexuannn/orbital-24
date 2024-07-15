@@ -6,7 +6,7 @@ import EmailButton from '../../components/EmailButton';
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
 import { db, auth } from '../../firebase.config';
-import { doc, getDocs, collection, getDoc } from 'firebase/firestore';
+import { doc, getDocs, collection, getDoc, updateDoc} from 'firebase/firestore';
 
 const PetListing = () => {
   const [pet, setPet] = useState([]);
@@ -42,7 +42,6 @@ const PetListing = () => {
 
       const docRef = doc(db, 'shelters', shelterId);
 
-      // Get the document snapshot
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists) {
@@ -61,6 +60,23 @@ const PetListing = () => {
     await fetchPet();
     await fetchShelterData();
     setRefreshing(false);
+  };
+
+  const togglePetStatus = async (petId, currentStatus) => {
+    try {
+      const newStatus = currentStatus === 'available' ? 'adopted' : 'available';
+      const petDocRef = doc(db, 'petListing', petId);
+      await updateDoc(petDocRef, { status: newStatus });
+
+      setPet((prevPets) =>
+        prevPets.map((pet) =>
+          pet.id === petId ? { ...pet, data: { ...pet.data, status: newStatus } } : pet
+        )
+      );
+    } catch (error) {
+      console.error('Error updating pet status:', error);
+      Alert.alert('Error updating pet status. Please try again.');
+    }
   };
 
   const navigationData = [
@@ -140,6 +156,18 @@ const PetListing = () => {
                   <Text className="text-darkBrown font-pregular text-lg ml-3">
                     {p.data.caption}
                   </Text>
+                </View>
+
+                <View className="flex-row justify-center items-center ml-2 mt-2">
+                  <Text className="text-turqoise font-pbold">Status: {p.data.status}</Text>
+                  <TouchableOpacity
+                    onPress={() => togglePetStatus(p.id, p.data.status)}
+                    className="bg-[#416F82] p-2.5 rounded ml-2"
+                  >
+                    <Text className="text-white font-poppins-regular">
+                      Toggle Status
+                    </Text>
+                  </TouchableOpacity>
                 </View>
 
                 <View className="w-full justify-start px-4 mb-4">

@@ -24,6 +24,7 @@ const PostShelterImage = () => {
     species: '',
     sex:'',
     breed: '',
+    status: 'available',
 
   });
 
@@ -33,6 +34,14 @@ const PostShelterImage = () => {
       [field]: value,
     }));
   };
+
+  const toggleStatus = () => {
+    setPetDetails((prevDetails) => ({
+      ...prevDetails,
+      status: prevDetails.status === 'available' ? 'adopted' : 'available',
+    }));
+  };
+  
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -104,6 +113,7 @@ const PostShelterImage = () => {
           sex:'',
           species: '',
           breed: '',
+          status: 'available'
         });
       } else {
         Alert.alert('You must select an image and add a caption.');
@@ -259,6 +269,13 @@ const PostShelterImage = () => {
                   fontFamily: 'Poppins-regular'
                 }}
               />
+              
+              <View className="flex items-center my-2.5">
+                <TouchableOpacity onPress={toggleStatus} className="bg-[#416F82] p-2.5 rounded">
+                  <Text className="text-white font-poppins-regular">Status (Current: {petDetails.status})</Text>
+                 </TouchableOpacity>
+              </View>
+
 
             </View>
           )}
