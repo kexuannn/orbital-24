@@ -49,7 +49,7 @@ const viewHome = () => {
 
       const docRef = doc(db, 'shelters', id);
 
-      // Get the document snapshot
+
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists) {
