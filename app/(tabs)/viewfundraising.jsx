@@ -20,7 +20,7 @@ const viewFundraising = () => {
   useEffect(() => {
     fetchFundraising();
     fetchShelterData();
-  }, []);
+  }, [optionalParameter]);
 
   const fetchFundraising = async () => {
     try {

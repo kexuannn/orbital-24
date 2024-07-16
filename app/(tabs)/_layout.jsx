@@ -140,6 +140,15 @@ const TabsLayout = () => {
           }}
         />
 
+        <Tabs.Screen
+          name='searchResults'
+          options={{
+            title: 'searchResults',
+            href: null,
+            headerShown: false,
+          }}
+        />
+
         
       </Tabs>
       

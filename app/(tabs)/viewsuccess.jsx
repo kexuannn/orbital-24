@@ -20,7 +20,7 @@ const viewSuccess = () => {
   useEffect(() => {
     fetchSuccess();
     fetchShelterData();
-  }, []);
+  }, [optionalParameter]);
 
   const fetchSuccess = async () => {
     try {
@@ -53,6 +53,7 @@ const viewSuccess = () => {
         const data = docSnap.data();
         setShelterData(data); // Set all shelter data to state
       } else {
+
         console.log('No such document!');
       }
     } catch (error) {

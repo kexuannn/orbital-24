@@ -24,7 +24,7 @@ const viewHome = () => {
     fetchPet();
     fetchShelterData();
     fetchBookmarkedPets(); 
-  }, []);
+  }, [id]);
 
   
   const fetchPet = async () => {

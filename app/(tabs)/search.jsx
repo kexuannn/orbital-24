@@ -1,7 +1,8 @@
 import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
+import { useRouter } from 'expo-router';
 
 import SearchBar from '../../components/SearchBar'
 import { db, auth } from '../../firebase.config'
@@ -10,11 +11,13 @@ import { icons } from '../../constants'
 import EmailButton from '../../components/EmailButton'
 
 const Search = () => {
+  const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [bookmarkedPets, setBookmarkedPets] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
   const [userData, setUserData] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
   const fetchUserData = async () => {
     try {
@@ -57,19 +60,37 @@ const Search = () => {
     try {
       if (userData && userData.desiredPets && Array.isArray(userData.desiredPets)) {
         const normalizedDesiredPets = userData.desiredPets.map(species => species.toLowerCase());
+        const property = userData.property; // Replace this with your actual property criteria
   
         const dataCollectionRef = collection(db, 'petListing');
-        const q = query(dataCollectionRef, where('species', 'in', normalizedDesiredPets));
-        const querySnapshot = await getDocs(q);
   
-        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        // Initial query to filter by both species and property
+        let q = query(
+          dataCollectionRef,
+          where('species', 'in', normalizedDesiredPets),
+          where('property', '==', property) // Adjust this line to use the correct property field and value
+        );
+  
+        let querySnapshot = await getDocs(q);
+        let data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+        // If the initial query returns no results, filter by species only
+        if (data.length === 0) {
+          q = query(
+            dataCollectionRef,
+            where('species', 'in', normalizedDesiredPets)
+          );
+  
+          querySnapshot = await getDocs(q);
+          data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
+  
         setFilteredData(data);
       }
     } catch (error) {
       console.error('Error fetching filtered data:', error);
     }
-  };
-  
+  };  
 
   const toggleBookmark = async (postId) => {
     try {
@@ -105,6 +126,34 @@ const Search = () => {
     }
   };
 
+  const searchPets = async (searchTerm) => {
+    try {
+      const dataCollectionRef = collection(db, 'petListing');
+      const q = query(dataCollectionRef, where('species', '>=', searchTerm), where('species', '<=', searchTerm + '\uf8ff'));
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setSearchResults(data);
+      router.push({ pathname: 'searchResults', params: { results: data }})
+    } catch (error) {
+      console.error('Error searching pets:', error);
+    }
+  };
+
+  const debounce = (func, delay) => {
+    let timer;
+    return function (...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => func.apply(this, args), delay);
+    };
+  };
+  
+  // Debounce the search function
+  const debouncedSearchPets = useCallback(debounce((query) => searchPets(query), 500), []);
+
+  const handleSearch = (query) => {
+    debouncedSearchPets(query);  // Fetch data based on search query
+  };
+  
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchUserData();
@@ -114,10 +163,13 @@ const Search = () => {
 
   useEffect(() => {
     fetchBookmarkedPets(); 
+    fetchUserData();
   }, []);
 
   useEffect(() => {
-    fetchFilteredData();
+    if (userData) {
+      fetchFilteredData();
+    }
   }, [userData]);
 
   return (
@@ -134,7 +186,7 @@ const Search = () => {
             </Text>
           </View>
 
-          <SearchBar/>
+          <SearchBar onSearch={handleSearch}/>
 
           <View className="border-turqoise border-b mt-4 mb-4"></View>
 

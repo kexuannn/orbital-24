@@ -18,6 +18,7 @@ const Home = () => {
     fetchShelters();
     fetchPosts();
   }, []);
+  
 
   const fetchShelters = async () => {
     try {
