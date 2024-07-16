@@ -124,14 +124,14 @@ const Home = () => {
                   <Image
                     source={{ uri: post.data.imageUrl }}
                     style={{
-                      width: 358,
+                      width: 398,
                       height: 400,
 
                     }}
                   />
                 </View>
 
-                <View className='mb-2'>
+                <View className='mb-2 mx-2 mt-1'>
                   <LikeButton postId={post.id} collectionName={"posts"} initialLikes={(post.data.likedBy && post.data.likedBy.length) || 0} />
                 </View>
 

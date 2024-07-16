@@ -24,9 +24,24 @@ const PostShelterImage = () => {
     species: '',
     sex:'',
     breed: '',
+    property: '',
     status: 'available',
 
   });
+
+  const handlePropertyChange = (value) => {
+    setPetDetails((prevPetDetails) => ({
+      ...prevPetDetails,
+      property: value,
+    }));
+  };
+
+  const handleSpeciesChange = (value) => {
+    setPetDetails((prevPetDetails) => ({
+      ...prevPetDetails,
+      species: value.toLowerCase(),
+    }));
+  };
 
   const handlePetDetailsChange = (field, value) => {
     setPetDetails((prevDetails) => ({
@@ -238,21 +253,22 @@ const PostShelterImage = () => {
                 }}
               />
 
-              <TextInput
-                placeholder="Species:"
-                placeholderTextColor='#416F82'
-                value={petDetails.species}
-                onChangeText={(text) => handlePetDetailsChange('species', text)}
-                style={{
-                  borderBottomWidth: 1,
-                  borderColor: '#416F82',
-                  marginVertical: 10,
-                  padding: 8,
-                  fontSize: 16,
-                  color: '#416F82',
-                  fontFamily: 'Poppins-regular'
-                }}
-              />
+            <Text className="text-turqoise font-pregular mt-4 text-base mx-2">Species:</Text>
+            <CustomPicker
+              selectedValue={petDetails.species}
+              onValueChange={handleSpeciesChange}
+              items={[
+                { label: 'Dog', value: 'Dog' },
+                { label: 'Cat', value: 'Cat' },
+                { label: 'Rabbit', value: 'Rabbit' },
+                { label: 'Others', value: 'Others' }
+              ]}
+            />
+            <View className="mb-2">
+              <Text className="text-turqoise font-pregular text-md mx-2">Selected Species: {petDetails.species}</Text>
+            </View>
+
+            <View className='border-b border-turqoise'></View>
 
               <TextInput
                 placeholder="Breed:"
@@ -269,6 +285,23 @@ const PostShelterImage = () => {
                   fontFamily: 'Poppins-regular'
                 }}
               />
+
+            <Text className="text-turqoise font-pregular mt-4 text-base mx-2">Property Type:</Text>
+            <CustomPicker
+              selectedValue={petDetails.property}
+              onValueChange={handlePropertyChange}
+              items={[
+                { label: 'HDB', value: 'HDB' },
+                { label: 'Condominium', value: 'Condominium' },
+                { label: 'Landed', value: 'Landed' },
+              ]}
+            />
+            <View className="mb-2">
+              <Text className="text-turqoise font-pregular text-md mx-2">Selected Property Type: {petDetails.property}</Text>
+            </View>
+
+            <View className='border-b border-turqoise mb-5'></View>
+
               
               <View className="flex items-center my-2.5">
                 <TouchableOpacity onPress={toggleStatus} className="bg-[#416F82] p-2.5 rounded">
