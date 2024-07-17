@@ -125,7 +125,7 @@ const Home = () => {
                   <Image
                     source={{ uri: post.data.imageUrl }}
                     style={{
-                      width: 398,
+                      width: 358,
                       height: 400,
 
                     }}
