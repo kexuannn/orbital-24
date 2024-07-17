@@ -50,7 +50,13 @@ const SearchResults = () => {
     <SafeAreaView className="bg-bgc h-full">
       <ScrollView>
         <View className="w-full h-full justify-start px-4 py-10">
-          <Text className="text-turqoise font-gb mt-4 text-5xl mb-2">Search Results</Text>
+
+            <View className="justify-start flex-center items-center justify-center">
+                <Text className="text-turqoise font-gb mt-4 text-5xl mb-2 ">
+                Results
+                </Text>
+            </View>
+            
           {Array.isArray(results) && results.length > 0 ? (
             results.slice().reverse().map((result) => (
               <View key={result.id} className="bg-white mt-4">
