@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity } from 'react-native'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { useRouter } from 'expo-router';
