@@ -17,7 +17,6 @@ const Search = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [userData, setUserData] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
 
   const fetchUserData = async () => {
     try {
@@ -59,8 +58,8 @@ const Search = () => {
   const fetchFilteredData = async () => {
     try {
       if (userData && userData.desiredPets && Array.isArray(userData.desiredPets)) {
-        const normalizedDesiredPets = userData.desiredPets.map(species => species.toLowerCase());
-        const property = userData.property; // Replace this with your actual property criteria
+        const normalizedDesiredPets = userData.desiredPets;
+        const property = userData.property; 
   
         const dataCollectionRef = collection(db, 'petListing');
   
@@ -68,7 +67,7 @@ const Search = () => {
         let q = query(
           dataCollectionRef,
           where('species', 'in', normalizedDesiredPets),
-          where('property', '==', property) // Adjust this line to use the correct property field and value
+          where('property', '==', property) 
         );
   
         let querySnapshot = await getDocs(q);
@@ -131,29 +130,14 @@ const Search = () => {
       const dataCollectionRef = collection(db, 'petListing');
       const q = query(dataCollectionRef, where('species', '>=', searchTerm), where('species', '<=', searchTerm + '\uf8ff'));
       const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setSearchResults(data);
-      router.push({ pathname: 'searchResults', params: { results: data }})
+      const data = querySnapshot.docs.map(doc => doc.id);  // Only get the IDs
+      console.log("Fetched IDs:", data);  // Log fetched IDs to confirm it's correct
+      router.push({ pathname: 'searchResults', params: { post: data }});  // Route the IDs
     } catch (error) {
       console.error('Error searching pets:', error);
     }
-  };
+  };  
 
-  const debounce = (func, delay) => {
-    let timer;
-    return function (...args) {
-      clearTimeout(timer);
-      timer = setTimeout(() => func.apply(this, args), delay);
-    };
-  };
-  
-  // Debounce the search function
-  const debouncedSearchPets = useCallback(debounce((query) => searchPets(query), 500), []);
-
-  const handleSearch = (query) => {
-    debouncedSearchPets(query);  // Fetch data based on search query
-  };
-  
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchUserData();
@@ -186,7 +170,7 @@ const Search = () => {
             </Text>
           </View>
 
-          <SearchBar onSearch={handleSearch}/>
+          <SearchBar onSearch={searchPets}/>
 
           <View className="border-turqoise border-b mt-4 mb-4"></View>
 
@@ -273,6 +257,9 @@ const Search = () => {
                     </Text>
                     <Text className="text-darkBrown font-pregular text-lg">
                       Breed: {fd.breed}
+                    </Text>
+                    <Text className="text-darkBrown font-pregular text-lg">
+                      Property Type: {fd.property}
                     </Text>
                   </View>
                 )}

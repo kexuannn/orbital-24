@@ -39,7 +39,7 @@ const PostShelterImage = () => {
   const handleSpeciesChange = (value) => {
     setPetDetails((prevPetDetails) => ({
       ...prevPetDetails,
-      species: value.toLowerCase(),
+      species: value,
     }));
   };
 

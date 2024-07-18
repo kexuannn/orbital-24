@@ -198,6 +198,9 @@ const PetListing = () => {
                     <Text className="text-darkBrown font-pregular text-lg">
                       Breed: {p.data.breed}
                     </Text>
+                    <Text className="text-darkBrown font-pregular text-lg">
+                      Property Type: {p.data.property}
+                    </Text>
                   </View>
                 )}
               </View>

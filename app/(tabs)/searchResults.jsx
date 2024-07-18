@@ -1,19 +1,80 @@
+import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRoute } from '@react-navigation/native';
+import { collection, getDocs, query, where, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
+
 import LikeButton from '../../components/CustomLikeButton';
 import EmailButton from '../../components/EmailButton';
 import { icons } from '../../constants';
 import { auth, db } from '../../firebase.config';
-import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import BackButton from '../../components/CustomBackButton';
 
 const SearchResults = () => {
   const route = useRoute();
-  const { results } = route.params;
-  console.log("Received results:", results); // Add this line
+  const { post = '' } = route.params;
+  const postArray = Array.isArray(post) ? post : post.split(',').map(id => id.trim());
+  console.log('IDs received from route:', postArray);
+  
+  const [results, setResults] = useState([]);
   const [bookmarkedPets, setBookmarkedPets] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
+
+  // Fetch results based on IDs
+  const fetchResults = async () => {
+    try {
+      if (!Array.isArray(postArray) || postArray.length === 0) {
+        console.log('No valid IDs provided.');
+        return;
+      }
+
+      console.log('Fetching results for IDs:', postArray);
+
+      const postsCollection = collection(db, 'petListing');
+      const q = query(postsCollection, where('__name__', 'in', postArray));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        console.log('No matching documents found.');
+      } else {
+        const resultData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log('Fetched documents:', resultData);
+        setResults(resultData);
+      }
+    } catch (error) {
+      console.error('Error fetching pet listings:', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log('UseEffect triggered. IDs:', postArray);
+    fetchResults();
+  }, []);
+
+  useEffect(() => {
+    fetchBookmarkedPets();
+  }, []);
+
+  const fetchBookmarkedPets = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(userDocRef);
+
+        if (docSnap.exists) {
+          const userData = docSnap.data();
+          const userBookmarkedPets = userData.bookmarkedPets || [];
+          setBookmarkedPets(userBookmarkedPets);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching bookmarked pets:', error);
+    }
+  };
 
   const toggleBookmark = async (postId) => {
     try {
@@ -39,6 +100,7 @@ const SearchResults = () => {
           });
           updatedBookmarkedPets = [postId];
         }
+        console.log('Updated bookmarkedPets:', updatedBookmarkedPets);
         setBookmarkedPets(updatedBookmarkedPets);
       }
     } catch (error) {
@@ -50,15 +112,18 @@ const SearchResults = () => {
     <SafeAreaView className="bg-bgc h-full">
       <ScrollView>
         <View className="w-full h-full justify-start px-4 py-10">
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <BackButton 
+              containerStyles="p-3 rounded-xl mb-4" 
+              textStyles="text-turqoise" 
+            />
+            <Text className="pl-20 pb-18 text-turqoise font-gb mt-4 text-5xl mb-4">
+              Results
+            </Text>
+          </View>
 
-            <View className="justify-start flex-center items-center justify-center">
-                <Text className="text-turqoise font-gb mt-4 text-5xl mb-2 ">
-                Results
-                </Text>
-            </View>
-            
-          {Array.isArray(results) && results.length > 0 ? (
-            results.slice().reverse().map((result) => (
+          {results.length > 0 ? (
+            results.reverse().map((result) => (
               <View key={result.id} className="bg-white mt-4">
                 <View className="justify-start items-start mt-2">
                   <View className="flex-row justify-center items-center ml-2">
@@ -122,7 +187,7 @@ const SearchResults = () => {
                       containerStyles="mt-7 bg-turqoise"
                     />
                   </View>
-                  
+
                   {showDetails && (
                     <View className="ml-2 mb-2">
                       <Text className="text-darkBrown font-pregular text-lg">

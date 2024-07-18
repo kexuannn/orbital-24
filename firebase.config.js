@@ -5,7 +5,6 @@ import { getFirestore} from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getDatabase } from 'firebase/database';
 //import { getAnalytics } from "firebase/analytics";
-import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCmsrUr5yDyVNyWHxPS-Ypbht2sOrpLSDg",
