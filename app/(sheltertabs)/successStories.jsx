@@ -9,6 +9,7 @@ import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
 import { db, auth } from '../../firebase.config';
 import { doc, getDocs, collection, getDoc} from "firebase/firestore";
+import CommentSection from '../../components/Comments';
 
 const Success = () => {
 
