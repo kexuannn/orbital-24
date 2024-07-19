@@ -8,6 +8,7 @@ import { doc, setDoc, collection, getDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import EmailButton from '../../components/EmailButton';
 import CustomPicker from '../../components/CustomPicker';
+import CommentSection from '../../components/CommentSection';
 
 const PostShelterImage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
