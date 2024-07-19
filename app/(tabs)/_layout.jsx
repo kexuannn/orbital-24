@@ -84,9 +84,9 @@ const TabsLayout = () => {
         /> 
 
         <Tabs.Screen
-          name='livechat'
+          name='livechatlist'
           options={{
-            title:'livechat',
+            title:'livechatlist',
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon 
@@ -144,6 +144,15 @@ const TabsLayout = () => {
           name='searchResults'
           options={{
             title: 'searchResults',
+            href: null,
+            headerShown: false,
+          }}
+        />
+
+        <Tabs.Screen
+          name='livechat'
+          options={{
+            title: 'livechat',
             href: null,
             headerShown: false,
           }}

@@ -72,7 +72,16 @@ const TabsLayout = () => {
         <Tabs.Screen
           name='shelterLivechat'
           options={{
-            title:'shelterLivechat',
+            title: 'shelterLivechat',
+            href: null,
+            headerShown: false,
+          }}
+        />
+
+        <Tabs.Screen
+          name='shelterLiveChatList'
+          options={{
+            title:'shelterLiveChatList',
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon 
