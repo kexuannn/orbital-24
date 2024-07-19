@@ -114,6 +114,7 @@ const PostShelterImage = () => {
           imageUrl,
           caption,
           createdAt: new Date(),
+          comments: [],
           ...petDetails
         });
 
