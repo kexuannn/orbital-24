@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { icons } from '../../constants';
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import { db, auth } from '../../firebase.config';
-import { doc, getDocs, collection, getDoc, updateDoc,arrayUnion, arrayRemove, } from 'firebase/firestore';
+import { doc, getDocs, collection, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { useRoute } from '@react-navigation/native';
 import LikeButton from '../../components/CustomLikeButton';
 import BackButton from '../../components/CustomBackButton';
 import EmailButton from '../../components/EmailButton';
 
-const viewHome = () => {
+const ViewHome = () => {
   const route = useRoute();
   const { id } = route.params;
 
@@ -18,15 +18,14 @@ const viewHome = () => {
   const [shelterData, setShelterData] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [bookmarkedPets, setBookmarkedPets] = useState([]);
-  const [showDetails, setShowDetails] = useState(false);
+  const [detailsVisibility, setDetailsVisibility] = useState({});
 
   useEffect(() => {
     fetchPet();
     fetchShelterData();
-    fetchBookmarkedPets(); 
+    fetchBookmarkedPets();
   }, [id]);
 
-  
   const fetchPet = async () => {
     try {
       const postsCollection = collection(db, 'petListing');
@@ -36,8 +35,7 @@ const viewHome = () => {
           id: doc.id,
           data: doc.data(),
         })).filter((pet) => pet.data.userId === id);
-     
-  
+
       setPet(petData);
     } catch (error) {
       console.error('Error fetching pet listings:', error);
@@ -46,10 +44,7 @@ const viewHome = () => {
 
   const fetchShelterData = async () => {
     try {
-
       const docRef = doc(db, 'shelters', id);
-
-
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists) {
@@ -86,9 +81,8 @@ const viewHome = () => {
       const user = auth.currentUser;
       if (user) {
         const userDocRef = doc(db, 'users', user.uid);
-  
+
         let updatedBookmarkedPets = [];
-  
 
         if (bookmarkedPets) {
           if (bookmarkedPets.includes(postId)) {
@@ -108,15 +102,13 @@ const viewHome = () => {
           });
           updatedBookmarkedPets = [postId];
         }
-  
+
         setBookmarkedPets(updatedBookmarkedPets);
       }
     } catch (error) {
       console.error('Error toggling bookmark:', error);
     }
   };
-  
-
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -125,11 +117,18 @@ const viewHome = () => {
     setRefreshing(false);
   };
 
+  const toggleDetails = (postId) => {
+    setDetailsVisibility((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId]
+    }));
+  };
+
   const navigationData = [
     {
       id: '1',
       title: 'Pet Listing',
-      screen: 'viewhome', 
+      screen: 'viewhome',
     },
     {
       id: '2',
@@ -161,7 +160,6 @@ const viewHome = () => {
             </Text>
           </View>
 
-          
           <HorizontalBar data={navigationData} optionalParameter={id} />
 
           {pet.reverse().map((p) => (
@@ -192,9 +190,7 @@ const viewHome = () => {
                   />
                 </View>
 
-
-
-                <View className= 'flex flex-row ml-2 mb-2'>
+                <View className='flex flex-row ml-2 mb-2'>
                   <LikeButton postId={p.id} collectionName={"petListing"} initialLikes={(p.data.likedBy && p.data.likedBy.length) || 0} />
                   <TouchableOpacity onPress={() => toggleBookmark(p.id)} style={{ marginLeft: 10 }}>
                     <Image 
@@ -217,19 +213,19 @@ const viewHome = () => {
 
                 <View>
                   <Text className="text-darkBrown font-pregular text-lg ml-2">
-                      status: {p.data.status}
+                      Status: {p.data.status}
                   </Text>
                 </View>
 
                 <View className="w-full justify-start px-4 mb-4">
                   <EmailButton
-                    title= {showDetails ? 'Hide Details' : 'Show Details'}
-                    handlePress={() => setShowDetails(!showDetails)}
+                    title={detailsVisibility[p.id] ? 'Hide Details' : 'Show Details'}
+                    handlePress={() => toggleDetails(p.id)}
                     containerStyles="mt-7 bg-turqoise"
                   />
                 </View>
-                
-                {showDetails && (
+
+                {detailsVisibility[p.id] && (
                   <View className="ml-2 mb-2">
                     <Text className="text-darkBrown font-pregular text-lg">
                       Name: {p.data.name}
@@ -251,8 +247,6 @@ const viewHome = () => {
                     </Text>
                   </View>
                 )}
-                
-
               </View>
             </View>
           ))}
@@ -262,4 +256,4 @@ const viewHome = () => {
   );
 };
 
-export default viewHome;
+export default ViewHome;
