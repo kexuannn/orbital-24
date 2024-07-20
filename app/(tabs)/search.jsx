@@ -131,7 +131,6 @@ const Search = () => {
       const q = query(dataCollectionRef, where('species', '>=', searchTerm), where('species', '<=', searchTerm + '\uf8ff'));
       const querySnapshot = await getDocs(q);
       const data = querySnapshot.docs.map(doc => doc.id);  // Only get the IDs
-      console.log("Fetched IDs:", data);  // Log fetched IDs to confirm it's correct
       router.push({ pathname: 'searchResults', params: { post: data }});  // Route the IDs
     } catch (error) {
       console.error('Error searching pets:', error);
