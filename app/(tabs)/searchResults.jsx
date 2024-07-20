@@ -14,21 +14,17 @@ const SearchResults = () => {
   const route = useRoute();
   const { post = '' } = route.params;
   const postArray = Array.isArray(post) ? post : post.split(',').map(id => id.trim());
-  console.log('IDs received from route:', postArray);
   
   const [results, setResults] = useState([]);
   const [bookmarkedPets, setBookmarkedPets] = useState([]);
   const [showDetails, setShowDetails] = useState(false);
 
-  // Fetch results based on IDs
   const fetchResults = async () => {
     try {
       if (!Array.isArray(postArray) || postArray.length === 0) {
         console.log('No valid IDs provided.');
         return;
       }
-
-      console.log('Fetching results for IDs:', postArray);
 
       const postsCollection = collection(db, 'petListing');
       const q = query(postsCollection, where('__name__', 'in', postArray));
@@ -41,7 +37,6 @@ const SearchResults = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        console.log('Fetched documents:', resultData);
         setResults(resultData);
       }
     } catch (error) {
@@ -50,7 +45,6 @@ const SearchResults = () => {
   };
 
   useEffect(() => {
-    console.log('UseEffect triggered. IDs:', postArray);
     fetchResults();
   }, []);
 

@@ -133,6 +133,8 @@ const Success = () => {
                   {succ.data.caption}
                 </Text>
                 </View>
+
+                <CommentSection/>
                 
               </View>
             </View>
