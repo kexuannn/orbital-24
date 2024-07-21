@@ -125,18 +125,20 @@ const Success = () => {
                   <LikeButton postId={succ.id} collectionName={"success"} initialLikes={(succ.data.likedBy && succ.data.likedBy.length) || 0} />
                 </View>
                 
-                <View className='flex justify-start flex-row ml-1 items-center mb-2'>
-                <Text className='text-turqoise font-pbold text-lg'>
-                  {succ.data.username}
-                </Text>
-                <Text className='text-darkBrown font-pregular text-reg ml-3 mt-1'>
-                  {succ.data.caption}
-                </Text>
+                <View className='flex justify-start flex-row ml-2 items-center'>
+                  <Text className='text-turqoise font-pbold text-lg'>
+                    {succ.data.username}
+                  </Text>
+                  <Text className='text-darkBrown font-pregular text-md ml-3'>
+                    {succ.data.caption}
+                  </Text>
                 </View>
-
-                <CommentSection/>
-                
               </View>
+
+              <View className='mb-4'>
+                <CommentSection postId={succ.id}/>
+              </View>
+
             </View>
           ))}
         </View>

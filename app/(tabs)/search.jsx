@@ -14,9 +14,16 @@ const Search = () => {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const [bookmarkedPets, setBookmarkedPets] = useState([]);
-  const [showDetails, setShowDetails] = useState(false);
   const [userData, setUserData] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
+  const [detailsVisibility, setDetailsVisibility] = useState({});
+
+  const toggleDetails = (postId) => {
+    setDetailsVisibility((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId]
+    }));
+  };
 
   const fetchUserData = async () => {
     try {
@@ -234,13 +241,13 @@ const Search = () => {
 
                 <View className="w-full justify-start px-4 mb-4">
                   <EmailButton
-                    title={showDetails ? 'Hide Details' : 'Show Details'}
-                    handlePress={() => setShowDetails(!showDetails)}
+                    title={detailsVisibility[fd.id] ? 'Hide Details' : 'Show Details'}
+                    handlePress={() => toggleDetails(fd.id)}
                     containerStyles="mt-7 bg-turqoise"
                   />
                 </View>
-                
-                {showDetails && (
+
+                {detailsVisibility[fd.id] && (
                   <View className="ml-2 mb-2">
                     <Text className="text-darkBrown font-pregular text-lg">
                       Name: {fd.name}
