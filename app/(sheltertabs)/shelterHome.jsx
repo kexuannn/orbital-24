@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import EmailButton from '../../components/EmailButton';
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
 import { db, auth } from '../../firebase.config';
-import { doc, getDocs, collection, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDocs, collection, getDoc, updateDoc} from 'firebase/firestore';
 
 const PetListing = () => {
   const [pet, setPet] = useState([]);
   const [shelterData, setShelterData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [shownDetails, setShownDetails] = useState(new Set()); // Use a Set to track shown details
+  const [detailsVisibility, setDetailsVisibility] = useState({});
 
   useEffect(() => {
     fetchPet();
     fetchShelterData();
   }, []);
+
+  const toggleDetails = (postId) => {
+    setDetailsVisibility((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId]
+    }));
+  };
 
   const fetchPet = async () => {
     try {
@@ -77,18 +84,6 @@ const PetListing = () => {
       console.error('Error updating pet status:', error);
       Alert.alert('Error updating pet status. Please try again.');
     }
-  };
-
-  const handleShowDetails = (postId) => {
-    setShownDetails(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(postId)) {
-        newSet.delete(postId);
-      } else {
-        newSet.add(postId);
-      }
-      return newSet;
-    });
   };
 
   const navigationData = [
@@ -184,13 +179,13 @@ const PetListing = () => {
 
                 <View className="w-full justify-start px-4 mb-4">
                   <EmailButton
-                    title={shownDetails.has(p.id) ? 'Hide Details' : 'Show Details'}
-                    handlePress={() => handleShowDetails(p.id)}
+                    title={detailsVisibility[p.id] ? 'Hide Details' : 'Show Details'}
+                    handlePress={() => toggleDetails(p.id)}
                     containerStyles="mt-7 bg-turqoise"
                   />
                 </View>
 
-                {shownDetails.has(p.id) && (
+                {detailsVisibility[p.id] && (
                   <View className="ml-2 mb-2">
                     <Text className="text-darkBrown font-pregular text-lg">
                       Name: {p.data.name}

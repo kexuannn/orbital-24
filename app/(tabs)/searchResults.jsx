@@ -17,7 +17,14 @@ const SearchResults = () => {
   
   const [results, setResults] = useState([]);
   const [bookmarkedPets, setBookmarkedPets] = useState([]);
-  const [showDetails, setShowDetails] = useState(false);
+  const [detailsVisibility, setDetailsVisibility] = useState({});
+
+  const toggleDetails = (postId) => {
+    setDetailsVisibility((prevState) => ({
+      ...prevState,
+      [postId]: !prevState[postId]
+    }));
+  };
 
   const fetchResults = async () => {
     try {
@@ -175,32 +182,35 @@ const SearchResults = () => {
                   </View>
 
                   <View className="w-full justify-start px-4 mb-4">
-                    <EmailButton
-                      title={showDetails ? 'Hide Details' : 'Show Details'}
-                      handlePress={() => setShowDetails(!showDetails)}
-                      containerStyles="mt-7 bg-turqoise"
-                    />
-                  </View>
+                  <EmailButton
+                    title={detailsVisibility[result.id] ? 'Hide Details' : 'Show Details'}
+                    handlePress={() => toggleDetails(result.id)}
+                    containerStyles="mt-7 bg-turqoise"
+                  />
+                </View>
 
-                  {showDetails && (
-                    <View className="ml-2 mb-2">
-                      <Text className="text-darkBrown font-pregular text-lg">
-                        Name: {result.name}
-                      </Text>
-                      <Text className="text-darkBrown font-pregular text-lg">
-                        Age: {result.age}
-                      </Text>
-                      <Text className="text-darkBrown font-pregular text-lg">
-                        Species: {result.species}
-                      </Text>
-                      <Text className="text-darkBrown font-pregular text-lg">
-                        Sex: {result.sex}
-                      </Text>
-                      <Text className="text-darkBrown font-pregular text-lg">
-                        Breed: {result.breed}
-                      </Text>
-                    </View>
-                  )}
+                {detailsVisibility[result.id] && (
+                  <View className="ml-2 mb-2">
+                    <Text className="text-darkBrown font-pregular text-lg">
+                      Name: {result.name}
+                    </Text>
+                    <Text className="text-darkBrown font-pregular text-lg">
+                      Age: {result.age}
+                    </Text>
+                    <Text className="text-darkBrown font-pregular text-lg">
+                      Species: {result.species}
+                    </Text>
+                    <Text className="text-darkBrown font-pregular text-lg">
+                      Sex: {result.sex}
+                    </Text>
+                    <Text className="text-darkBrown font-pregular text-lg">
+                      Breed: {result.breed}
+                    </Text>
+                    <Text className="text-darkBrown font-pregular text-lg">
+                      Property Type: {result.property}
+                    </Text>
+                  </View>
+                )}
                 </View>
               </View>
             ))

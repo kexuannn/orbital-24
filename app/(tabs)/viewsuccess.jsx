@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { icons } from '../../constants';
+
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import { db, auth } from '../../firebase.config';
 import { doc, getDocs, collection, getDoc } from 'firebase/firestore';
 import { useRoute } from '@react-navigation/native';
 import BackButton from '../../components/CustomBackButton';
 import LikeButton from '../../components/CustomLikeButton';
+import CommentSection from '../../components/Comments';
 
 const viewSuccess = () => {
   const route = useRoute();
@@ -146,6 +147,11 @@ const viewSuccess = () => {
                     {s.data.caption}
                   </Text>
                 </View>
+
+              </View>
+
+              <View className='mb-4'>
+                <CommentSection postId={s.id}/>
               </View>
             </View>
           ))}

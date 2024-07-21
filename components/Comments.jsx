@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList } from 'react-native';
+import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { auth, db } from '../firebase.config';
-import { collection, addDoc, getDocs, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, getDocs, getDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 const CommentSection = ({ postId }) => {
   const [comments, setComments] = useState([]);
@@ -30,10 +30,29 @@ const CommentSection = ({ postId }) => {
       const user = auth.currentUser;
       if (!user) return;
 
+      let username = user.displayName;
+      if (!username) {
+        // Check in 'users' collection
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          username = userDocSnap.data().username || 'Unknown';
+        } else {
+          // If not found, check in 'shelters' collection
+          const shelterDocRef = doc(db, 'shelters', user.uid);
+          const shelterDocSnap = await getDoc(shelterDocRef);
+          if (shelterDocSnap.exists()) {
+            username = shelterDocSnap.data().username || 'Unknown';
+          } else {
+            username = 'Unknown';
+          }
+        }
+      }
+
       const commentsCollection = collection(db, 'success', postId, 'comments');
       await addDoc(commentsCollection, {
         userId: user.uid,
-        username: user.displayName,
+        username,
         profilePicture: user.photoURL,
         commentText: newComment,
         timestamp: serverTimestamp(),
@@ -53,25 +72,59 @@ const CommentSection = ({ postId }) => {
     }
   };
 
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const commentDocRef = doc(db, 'success', postId, 'comments', commentId);
+      await deleteDoc(commentDocRef);
+      
+      // Refetch comments
+      const commentsCollection = collection(db, 'success', postId, 'comments');
+      const snapshot = await getDocs(commentsCollection);
+      const commentsData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        data: doc.data(),
+      }));
+      setComments(commentsData);
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
   return (
     <View>
       <FlatList
         data={comments}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View className="mt-2 mb-2 ml-2">
-            <Text className="text-darkBrown font-pbold text-lg">{item.data.username}</Text>
-            <Text className="text-darkBrown font-pregular text-lg">{item.data.commentText}</Text>
+          <View className="mb-2 ml-2">
+            <Text className="ml-1 text-darkBrown font-pbold text-med">{item.data.username}</Text>
+            <View className='flex-row justify-between items-center'>
+              <Text className="text-darkBrown font-pregular text-med flex-grow ml-2">{item.data.commentText}</Text>
+              {item.data.userId === auth.currentUser?.uid && (
+                <TouchableOpacity onPress={() => handleDeleteComment(item.id)}>
+                  <Text className="text-red underline mr-4">Delete</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         )}
       />
-      <TextInput
-        value={newComment}
-        onChangeText={setNewComment}
-        placeholder="Add a comment..."
-        className="border border-gray-300 rounded p-2 mt-2"
-      />
-      <Button title="Post Comment" onPress={handleAddComment} />
+
+      <View className="flex-row items-center p-2 border-darkBrown">
+        <TextInput
+            value={newComment}
+            onChangeText={setNewComment}
+            placeholder="Add a comment..."
+            placeholderTextColor='#416F82'
+            className="flex-1 h-10 border border-darkBrown px-3 rounded color-darkBrown font-plight"
+        />
+        <TouchableOpacity
+            className="ml-2 px-4 py-2 bg-turqoise rounded"
+            onPress={handleAddComment}
+        >
+            <Text className="text-white font-plight">Post comment</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
