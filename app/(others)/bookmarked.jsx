@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { auth, db } from '../../firebase.config';
-import { getDoc, doc, deleteDoc, updateDoc, arrayRemove } from 'firebase/firestore';
+import { getDoc, doc, updateDoc, arrayRemove } from 'firebase/firestore';
 import { icons } from "../../constants";
+
 
 const Bookmarked = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -92,10 +93,33 @@ const Bookmarked = () => {
         await updateDoc(userDocRef, {
           bookmarkedPets: arrayRemove(petId),
         });
-        }
+      }
     } catch (error) {
       console.error('Error deleting pet: ', error);
     }
+  };
+
+  const handleOption = (petId) => {
+    Alert.alert(
+      'Options',
+      'Choose an option',
+      [
+        {
+          text: 'Pin',
+          onPress: () => pinPet(petId),
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => deletePet(petId),
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const onRefresh = async () => {
@@ -112,11 +136,14 @@ const Bookmarked = () => {
         }
       >
         <View className="w-full justify-start px-4 py-10">
-          <Text className="text-turqoise font-gb mt-4 text-5xl mb-4 ">
+          <Text className="text-turqoise font-gb mt-4 text-5xl mb-4">
             Bookmarked pets
           </Text>
 
           <View className="flex-row items-center border-b border-turqoise">
+            <Text className="w-12 text-center text-xl font-plight text-turqoise">
+              {/* Empty header for Options */}
+            </Text>
             <Text className="flex-1 text-center text-xl font-plight text-turqoise">
               Name
             </Text>
@@ -129,26 +156,26 @@ const Bookmarked = () => {
           </View>
 
           {bookmarkedPets.map((pet) => (
-            <View key={pet.id} className="flex-row items-center border-turqoise mb-2">
-              <TouchableOpacity onPress={() => pinPet(pet.id)} className="bg-darkBrown flex items-center justify-center p-2">
-                <Text className="text-white text-xl">pin</Text>
-              </TouchableOpacity>
-              <View className="flex-1">
-                <Text className="bg-darkBrown text-center text-xl font-plight text-white p-2">
-                  {pet.name}
-                </Text>
-                <Text className="bg-darkBrown text-center text-xl font-plight text-white p-2">
-                  {pet.username}
-                </Text>
-                <Text className={`text-xl font-plight p-2 ${pet.status === "available" ? 'bg-green-500 text-black' : 'bg-red text-white'}`}>
-                  {pet.status}
-                </Text>
-              </View>
-              <TouchableOpacity onPress={() => deletePet(pet.id)} className="bg-darkBrown p-2">
-                <Text className="text-xl font-plight text-red">Delete</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+  <View key={pet.id} className="flex-row items-center border-b border-turqoise mb-2 h-9">
+    <TouchableOpacity onPress={() => handleOption(pet.id)} className="w-12 h-full flex items-center justify-center">
+      <Image
+        source={icons.menu}
+        className="w-full h-full"
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+    <Text className="flex-1 bg-darkBrown text-center text-l font-plight text-white p-2 h-full">
+      {pet.name}
+    </Text>
+    <Text className="flex-1 bg-darkBrown text-center text-l font-plight text-white p-2 h-full">
+      {pet.username}
+    </Text>
+    <Text className={`flex-1 text-center text-l font-plight p-2 h-full ${pet.status === "available" ? 'bg-green-500 text-white' : 'bg-red text-white'}`}>
+      {pet.status}
+    </Text>
+  </View>
+))}
+
         </View>
       </ScrollView>
     </SafeAreaView>

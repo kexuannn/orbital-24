@@ -4,6 +4,7 @@ import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { collection, getDocs, query, where, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from 'firebase/firestore';
 
+
 import LikeButton from '../../components/CustomLikeButton';
 import EmailButton from '../../components/EmailButton';
 import { icons } from '../../constants';
