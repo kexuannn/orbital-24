@@ -11,8 +11,8 @@ import EmailButton from '../../components/EmailButton';
 import ImageViewer from '../../components/ImageViewer';
 import { db, auth, storage } from '../../firebase.config';
 import { icons } from '../../constants';
-import { doc, setDoc, getDoc, collection } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { doc, setDoc, getDoc, collection, deleteDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
 const User = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -157,6 +157,47 @@ const User = () => {
     return downloadUrl;
   };
 
+  const deleteProfile = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        // Delete profile picture from storage if it exists
+        if (profile.profilePicture) {
+          const fileRef = ref(storage, profile.profilePicture);
+          await deleteObject(fileRef);
+        }
+
+        // Delete user data from Firestore
+        const userDocRef = doc(collection(db, "users"), user.uid);
+        await deleteDoc(userDocRef);
+
+        // Delete user authentication entry
+        await user.delete();
+
+        console.log('Profile deleted successfully');
+        Alert.alert('Profile deleted successfully!');
+
+        // Redirect user to a different screen or log them out
+        router.push('/sign-up');
+      } else {
+        console.error('User not authenticated');
+      }
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+    }
+  };
+
+  const confirmDeleteProfile = () => {
+    Alert.alert(
+      'Delete Profile',
+      'Are you sure you want to delete your profile? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: deleteProfile },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView className="bg-bgc h-full">
       <ScrollView>
@@ -258,6 +299,12 @@ const User = () => {
             handlePress={saveProfile}
             containerStyles="mt-7 bg-turqoise p-3 rounded-xl"
             isLoading={isSubmitting}
+          />
+
+          <EmailButton
+            title="Delete Profile"
+            handlePress={confirmDeleteProfile}
+            containerStyles="mt-7 bg-red p-3 rounded-xl"
           />
 
         </View>

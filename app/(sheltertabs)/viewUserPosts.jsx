@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import LikeButton from '../../components/CustomLikeButton';
@@ -15,9 +15,6 @@ const viewUserPosts = () => {
   useEffect(() => {
     fetchPosts();
   }, []);
-
-
-
 
   const fetchPosts = async () => {
     try {
@@ -69,20 +66,19 @@ const viewUserPosts = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        
         <View className="w-full h-full justify-start px-4 py-10">
-        <HorizontalBar data={navigationData} />
+          <View className="justify-start flex-center items-center">
+            <Text className="text-turqoise font-gb mt-4 text-5xl mb-4">
+              Users' Posts
+            </Text>
+          </View>
 
-        <View className='border-b border-brown'>
-          <Text className="text-xl font-plight text-turqoise mt-4">Posts for you:</Text>
-        </View>
-    
+          <HorizontalBar data={navigationData} />
 
           {posts.reverse().map((post) => (
             <View key={post.id} className="bg-white mt-2">
               <View className="justify-start items-start mt-2">
-
-                <View className="flex-row justify-center items-center ml-2 ">
+                <View className="flex-row justify-center items-center ml-2">
                   <Image
                     source={{ uri: post.data.profilePicture }}
                     style={{
@@ -92,30 +88,37 @@ const viewUserPosts = () => {
                       borderRadius: 20,
                     }}
                   />
-                  <Text className="text-turqoise font-pbold text-lg ml-2 ">
-                    {post.data.username}
-                  </Text>
+                  <TouchableOpacity
+                    onPress={() => router.push({ pathname: 'userProfile', params: { userId: post.data.userId } })}
+                  >
+                    <Text className="text-turqoise font-pbold text-lg ml-2">
+                      {post.data.username}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
 
-                <View className= 'mt-2 mb-2'>
+                <View className='mt-2 mb-2'>
                   <Image
                     source={{ uri: post.data.imageUrl }}
                     style={{
                       width: 358,
                       height: 400,
-
                     }}
                   />
                 </View>
 
-                <View className='mb-2'>
-                  <LikeButton postId={post.id} initialLikes={(post.data.likedBy && post.data.likedBy.length) || 0}  />
+                <View className='mb-2 ml-2'>
+                  <LikeButton postId={post.id} initialLikes={(post.data.likedBy && post.data.likedBy.length) || 0} />
                 </View>
 
                 <View className="flex flex-row ml-2 items-center mb-2">
-                  <Text className="text-turqoise font-pbold text-lg">
-                    {post.data.username}
-                  </Text>
+                  <TouchableOpacity
+                    onPress={() => router.push({ pathname: 'userProfile', params: { userId: post.data.userId } })}
+                  >
+                    <Text className="text-turqoise font-pbold text-lg">
+                      {post.data.username}
+                    </Text>
+                  </TouchableOpacity>
                   <Text className="text-darkBrown font-pregular text-lg ml-3">
                     {post.data.caption}
                   </Text>

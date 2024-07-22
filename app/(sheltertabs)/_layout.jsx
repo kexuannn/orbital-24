@@ -135,6 +135,15 @@ const TabsLayout = () => {
           }}
         />
 
+<Tabs.Screen
+          name='userProfile'
+          options={{
+            title: 'userProfile',
+            href: null,
+            headerShown: false,
+          }}
+        />
+
       </Tabs>
     </>
   )

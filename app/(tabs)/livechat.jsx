@@ -81,7 +81,7 @@ const ChatScreen = () => {
         className="flex-1"
       >
         <View className="flex-1 p-2 bg-bgc">
-          <Text className="text-xl font-pbold mb-2.5 mt-4">
+          <Text className="text-xl font-pbold mb-2.5 mt-4 text-turqoise ml-2">
             You are currently chatting with {shelterName}
           </Text>
           {loading ? (
@@ -104,16 +104,17 @@ const ChatScreen = () => {
           )}
           <View className="flex-row items-center my-1.5">
             <TextInput
-              className="flex-1 border border-gray-300 p-2.5 rounded-md mr-2.5 font-pmedium"
+              className="flex-1 border border-darkBrown p-2.5 rounded-md mr-2.5 font-pmedium"
               value={message}
               onChangeText={setMessage}
               placeholder="Type a message..."
+              placeholderTextColor='#463939'
             />
             <TouchableOpacity
               onPress={sendMessage}
-              className="p-2 rounded-md"
+              className="p-2 rounded-md bg-turqoise"
             >
-              <Text className="text-turqoise text-center font-pmedium">
+              <Text className="text-white text-center font-pmedium">
                 Send
               </Text>
             </TouchableOpacity>
