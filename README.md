@@ -42,6 +42,7 @@ npm install nativewind
 npm install --save-dev tailwindcss@3.3.2
 npm install firebase
 npm install -g firebase-tools
+npm install react-native-phone-call
 ```
 
 ### Running the Program
