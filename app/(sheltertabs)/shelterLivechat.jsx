@@ -5,16 +5,19 @@ import { db, database, auth } from '../../firebase.config';
 import { doc, getDoc } from 'firebase/firestore';
 import { useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons'; 
+import call from 'react-native-phone-call';  
 
 const ShelterChatScreen = () => {
   const route = useRoute();
-  const { id } = route.params;  // `id` is the ID of the user (not the shelter)
+  const { id } = route.params;  
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [chatId, setChatId] = useState('');
   const [userName, setUserName] = useState('');
   const [shelterId, setShelterId] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(''); 
   const flatListRef = useRef();
 
   useEffect(() => {
@@ -30,7 +33,9 @@ const ShelterChatScreen = () => {
     try {
       const userDoc = await getDoc(doc(db, 'users', id));
       if (userDoc.exists()) {
-        setUserName(userDoc.data().username);
+        const userData = userDoc.data();
+        setUserName(userData.username);
+        setPhoneNumber(userData.contact); 
         const generatedChatId = generateChatId(currentShelterId, id);
         setChatId(generatedChatId);
         fetchMessages(generatedChatId);
@@ -74,6 +79,19 @@ const ShelterChatScreen = () => {
     }
   };
 
+  const makeCall = () => {
+    if (!phoneNumber) {
+      Alert.alert("Error", "No phone number available.");
+      return;
+    }
+
+    const args = {
+      number: phoneNumber,
+      prompt: true,
+    };
+    call(args).catch(console.error);
+  };
+
   return (
     <SafeAreaView className="bg-bgc h-full">
       <KeyboardAvoidingView
@@ -81,9 +99,14 @@ const ShelterChatScreen = () => {
         className="flex-1"
       >
         <View className="flex-1 p-2 bg-bgc">
-          <Text className="text-xl font-pbold mb-2.5 mt-4">
-            You are currently chatting with {userName}
-          </Text>
+          <View className="flex-row items-center justify-between mb-2">
+            <Text className="text-xl font-pbold mb-2.5 mt-4">
+              You are currently chatting with {userName}
+            </Text>
+            <TouchableOpacity onPress={makeCall} className="p-2">
+              <Icon name="call" size={24} color="green" />
+            </TouchableOpacity>
+          </View>
           {loading ? (
             <ActivityIndicator size={50} color="grey" />
           ) : (

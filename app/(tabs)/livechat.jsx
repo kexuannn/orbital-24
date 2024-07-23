@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Button, FlatList, ActivityIndicator, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, ActivityIndicator, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { ref, onValue, push } from 'firebase/database';
 import { db, database, auth } from '../../firebase.config'; 
 import { doc, getDoc } from 'firebase/firestore';
 import { useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Ionicons';
+import call from 'react-native-phone-call';  // Import phone call library
 
 const ChatScreen = () => {
   const route = useRoute();
@@ -15,6 +17,7 @@ const ChatScreen = () => {
   const [chatId, setChatId] = useState('');
   const [shelterName, setShelterName] = useState('');
   const [userId, setUserId] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(''); // To store phone number
   const flatListRef = useRef();
 
   useEffect(() => {
@@ -30,7 +33,9 @@ const ChatScreen = () => {
     try {
       const shelterDoc = await getDoc(doc(db, 'shelters', id));
       if (shelterDoc.exists()) {
-        setShelterName(shelterDoc.data().username);
+        const shelterData = shelterDoc.data();
+        setShelterName(shelterData.username);
+        setPhoneNumber(shelterData.number); // Assuming phone number is stored in Firestore
         const generatedChatId = generateChatId(currentUserId, id);
         setChatId(generatedChatId);
         fetchMessages(generatedChatId);
@@ -74,6 +79,14 @@ const ChatScreen = () => {
     }
   };
 
+  const makeCall = () => {
+    const args = {
+      number: phoneNumber, // Phone number to call
+      prompt: true, // Display the native dialer with a confirmation prompt
+    };
+    call(args).catch(console.error); // Handle errors if the call cannot be made
+  };
+
   return (
     <SafeAreaView className="bg-bgc h-full">
       <KeyboardAvoidingView
@@ -81,9 +94,14 @@ const ChatScreen = () => {
         className="flex-1"
       >
         <View className="flex-1 p-2 bg-bgc">
-          <Text className="text-xl font-pbold mb-2.5 mt-4">
-            You are currently chatting with {shelterName}
-          </Text>
+          <View className="flex-row items-center justify-between mb-2">
+            <Text className="text-xl font-pbold mt-4 text-turqoise ml-2">
+              You are currently chatting with {shelterName}
+            </Text>
+            <TouchableOpacity onPress={makeCall} className="p-2">
+              <Icon name="call" size={24} color="green" />
+            </TouchableOpacity>
+          </View>
           {loading ? (
             <ActivityIndicator size={50} color="grey" />
           ) : (
@@ -104,16 +122,17 @@ const ChatScreen = () => {
           )}
           <View className="flex-row items-center my-1.5">
             <TextInput
-              className="flex-1 border border-gray-300 p-2.5 rounded-md mr-2.5 font-pmedium"
+              className="flex-1 border border-darkBrown p-2.5 rounded-md mr-2.5 font-pmedium"
               value={message}
               onChangeText={setMessage}
               placeholder="Type a message..."
+              placeholderTextColor='#463939'
             />
             <TouchableOpacity
               onPress={sendMessage}
-              className="p-2 rounded-md"
+              className="p-2 rounded-md bg-turqoise"
             >
-              <Text className="text-turqoise text-center font-pmedium">
+              <Text className="text-white text-center font-pmedium">
                 Send
               </Text>
             </TouchableOpacity>
