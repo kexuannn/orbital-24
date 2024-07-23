@@ -34,7 +34,9 @@ const ViewHome = () => {
         .map((doc) => ({
           id: doc.id,
           data: doc.data(),
-        })).filter((pet) => pet.data.userId === id);
+        }))
+        .filter((pet) => pet.data.userId === id)
+        .sort((a, b) => b.data.createdAt.toDate().getTime() - a.data.createdAt.toDate().getTime()); // Sort posts by createdAt
 
       setPet(petData);
     } catch (error) {
@@ -124,6 +126,32 @@ const ViewHome = () => {
     }));
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'available':
+        return 'green';
+      case 'adopted':
+        return 'red';
+      case 'pending adoption':
+        return 'blue';
+      default:
+        return 'black';
+    }
+  };
+
+  const formatDate = (timestamp) => {
+    if (timestamp) {
+      const date = timestamp.toDate(); 
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return 'No Date'; 
+  };
+
+
   const navigationData = [
     {
       id: '1',
@@ -162,7 +190,7 @@ const ViewHome = () => {
 
           <HorizontalBar data={navigationData} optionalParameter={id} />
 
-          {pet.reverse().map((p) => (
+          {pet.map((p) => (
             <View key={p.id} className="bg-white mt-4">
               <View className="justify-start items-start mt-2">
                 <View className="flex-row justify-center items-center ml-2">
@@ -210,12 +238,17 @@ const ViewHome = () => {
                     {p.data.caption}
                   </Text>
                 </View>
+                <Text className="text-darkBrown font-pregular text-xs ml-2">
+                    Posted on: {formatDate(p.data.createdAt)}
+                </Text>
 
-                <View>
-                  <Text className="text-darkBrown font-pregular text-lg ml-2">
-                      Status: {p.data.status}
+                <View className="flex-row justify-center items-center ml-2 mt-2">
+                  <Text className="text-turqoise font-pbold text-lg">
+                    Status: 
+                    <Text style={{ color: getStatusColor(p.data.status) }}> {p.data.status}</Text>
                   </Text>
                 </View>
+
 
                 <View className="w-full justify-start px-4 mb-4">
                   <EmailButton

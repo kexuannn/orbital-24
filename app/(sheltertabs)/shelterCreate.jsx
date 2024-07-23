@@ -16,7 +16,7 @@ const PostShelterImage = () => {
 
   const [post, setPost] = useState({
     postType: '',
-  })
+  });
 
   const [petDetails, setPetDetails] = useState({
     age: '',
@@ -26,7 +26,6 @@ const PostShelterImage = () => {
     breed: '',
     property: '',
     status: 'available',
-
   });
 
   const handlePropertyChange = (value) => {
@@ -53,10 +52,9 @@ const PostShelterImage = () => {
   const toggleStatus = () => {
     setPetDetails((prevDetails) => ({
       ...prevDetails,
-      status: prevDetails.status === 'available' ? 'adopted' : 'available',
+      status: prevDetails.status === 'available' ? 'pending adoption' : prevDetails.status === 'pending adoption' ? 'adopted' : 'available',
     }));
   };
-  
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -99,11 +97,11 @@ const PostShelterImage = () => {
         } else if (post.postType === 'Success Stories') {
           postDocRef = doc(collection(db, "success"), `${user.uid}_${Date.now()}`);
         } else if (post.postType === 'Pet Listing') {
-          postDocRef = doc(collection(db, "petListing"), `${user.uid}_${Date.now()}`); 
+          postDocRef = doc(collection(db, "petListing"), `${user.uid}_${Date.now()}`);
         } else {
           Alert.alert('Error posting image. Please try again.');
         }
-        
+
         const userDocRef = doc(collection(db, "shelters"), user.uid);
         const userDocSnapshot = await getDoc(userDocRef);
         const username = userDocSnapshot.exists() ? userDocSnapshot.data().username : 'Unknown';
@@ -141,7 +139,7 @@ const PostShelterImage = () => {
     }
   };
 
-  const handlePostChange= (value) => {
+  const handlePostChange = (value) => {
     setPost((prevPost) => ({
       ...prevPost,
       postType: value,
@@ -160,7 +158,7 @@ const PostShelterImage = () => {
 
           <View className="items-center">
             {selectedImage ? (
-              <Image source={{ uri: selectedImage }} style={{ width: 300, height: 300 } } />
+              <Image source={{ uri: selectedImage }} style={{ width: 300, height: 300 }} />
             ) : (
               <Text>No image selected</Text>
             )}
@@ -197,7 +195,7 @@ const PostShelterImage = () => {
                 { label: 'Success Stories', value: 'Success Stories' },
               ]}
             />
-            
+
             <View className="mb-2">
               <Text className="text-darkBrown font-pmedium text-md">Selected Post Type: {post.postType}</Text>
             </View>
@@ -253,22 +251,20 @@ const PostShelterImage = () => {
                 }}
               />
 
-            <Text className="text-turqoise font-pregular mt-4 text-base mx-2">Species:</Text>
-            <CustomPicker
-              selectedValue={petDetails.species}
-              onValueChange={handleSpeciesChange}
-              items={[
-                { label: 'Dog', value: 'Dog' },
-                { label: 'Cat', value: 'Cat' },
-                { label: 'Rabbit', value: 'Rabbit' },
-                { label: 'Others', value: 'Others' }
-              ]}
-            />
-            <View className="mb-2">
-              <Text className="text-turqoise font-pregular text-md mx-2">Selected Species: {petDetails.species}</Text>
-            </View>
-
-            <View className='border-b border-turqoise'></View>
+              <Text className="text-turqoise font-pregular mt-4 text-base mx-2">Species:</Text>
+              <CustomPicker
+                selectedValue={petDetails.species}
+                onValueChange={handleSpeciesChange}
+                items={[
+                  { label: 'Dog', value: 'Dog' },
+                  { label: 'Cat', value: 'Cat' },
+                  { label: 'Rabbit', value: 'Rabbit' },
+                  { label: 'Others', value: 'Others' }
+                ]}
+              />
+              <View className="mb-2">
+                <Text className="text-turqoise font-pregular text-base mx-2">Selected Species: {petDetails.species}</Text>
+              </View>
 
               <TextInput
                 placeholder="Breed:"
@@ -286,30 +282,16 @@ const PostShelterImage = () => {
                 }}
               />
 
-            <Text className="text-turqoise font-pregular mt-4 text-base mx-2">Property Type:</Text>
-            <CustomPicker
-              selectedValue={petDetails.property}
-              onValueChange={handlePropertyChange}
-              items={[
-                { label: 'HDB', value: 'HDB' },
-                { label: 'Condominium', value: 'Condominium' },
-                { label: 'Landed', value: 'Landed' },
-              ]}
-            />
-            <View className="mb-2">
-              <Text className="text-turqoise font-pregular text-md mx-2">Selected Property Type: {petDetails.property}</Text>
-            </View>
-
-            <View className='border-b border-turqoise mb-5'></View>
-
-              
-              <View className="flex items-center my-2.5">
-                <TouchableOpacity onPress={toggleStatus} className="bg-[#416F82] p-2.5 rounded">
-                  <Text className="text-white font-poppins-regular">Status (Current: {petDetails.status})</Text>
-                 </TouchableOpacity>
+              <View className="mb-2">
+                <Text className="text-turqoise font-pregular text-base mx-2 mb-2">
+                  Status: <Text style={{ color: 'red' }}>{petDetails.status}</Text>
+                </Text>
+                <EmailButton
+                  title='Toggle Status'
+                  handlePress={toggleStatus}
+                  containerStyles={`bg-darkbrown `}
+                />
               </View>
-
-
             </View>
           )}
 
@@ -319,7 +301,6 @@ const PostShelterImage = () => {
             isLoading={isSubmitting}
             containerStyles={`bg-turqoise`}
           /> 
-
         </View>
       </ScrollView>
     </SafeAreaView>
