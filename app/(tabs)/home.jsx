@@ -98,7 +98,19 @@ const Home = () => {
               </View>
             </View>
           ))}
+
+          <EmailButton
+            title="View map of shelters here!"
+            containerStyles="bg-turqoise rounded-xl mt-4"
+            textStyles="text-center"
+            handlePress={() =>
+            router.push({ pathname: 'maps'})
+            }
+          />
+          
           <View className="border-turqoise border-b mt-6 mb-4"></View>
+
+          
 
           <Text className="text-xl font-plight text-turqoise">Posts for you:</Text>
 
