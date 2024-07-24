@@ -232,7 +232,7 @@ const PostShelterImage = () => {
               />
 
               <TextInput
-                placeholder="Age:"
+                placeholder="Age (in years):"
                 placeholderTextColor='#416F82'
                 value={petDetails.age}
                 onChangeText={(text) => handlePetDetailsChange('age', text)}

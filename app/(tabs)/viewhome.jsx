@@ -264,7 +264,7 @@ const ViewHome = () => {
                       Name: {p.data.name}
                     </Text>
                     <Text className="text-darkBrown font-pregular text-lg">
-                      Age: {p.data.age}
+                      Age (in years): {p.data.age}
                     </Text>
                     <Text className="text-darkBrown font-pregular text-lg">
                       Species: {p.data.species}
