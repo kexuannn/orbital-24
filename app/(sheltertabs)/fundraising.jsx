@@ -19,8 +19,13 @@ const Fundraising = () => {
           id: doc.id,
           data: doc.data()
         })).filter((pet) => pet.data.userId === auth.currentUser.uid);
-        
-        setFundraising(fundraisingData);
+
+        // Sort by createdAt in descending order
+        const sortedData = fundraisingData.sort((a, b) => 
+          b.data.createdAt.toDate().getTime() - a.data.createdAt.toDate().getTime()
+        );
+
+        setFundraising(sortedData);
       });
 
       return () => unsubscribe(); 
@@ -66,6 +71,18 @@ const Fundraising = () => {
     }
   }, [shelterData]); 
 
+  const formatDate = (timestamp) => {
+    if (timestamp) {
+      const date = timestamp.toDate(); 
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return 'No Date'; 
+  };
+
   
 
   const navigationData = [
@@ -101,7 +118,7 @@ const Fundraising = () => {
             </Text>
           </View>
           <HorizontalBar data={navigationData} />
-          {fundraising.reverse().map((fundr) => (
+          {fundraising.map((fundr) => (
             <View key={fundr.id} className="bg-white mt-4">
               <View className='justify-start items-start mt-2'>
                 <View className='flex-row justify-center items-center ml-2 '>
@@ -132,6 +149,9 @@ const Fundraising = () => {
                     {fundr.data.caption}
                   </Text>
                 </View>
+                <Text className="text-darkBrown font-pregular text-xs ml-2 mb-2">
+                    Posted on: {formatDate(fundr.data.createdAt)}
+                </Text>
               </View>
             </View>
           ))}

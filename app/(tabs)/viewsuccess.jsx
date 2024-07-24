@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, RefreshControl } from 'react-native';
+import { View, Text, Image, RefreshControl, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import HorizontalBar from '../../components/CustomHorizontalBar';
@@ -31,9 +31,10 @@ const viewSuccess = () => {
         .map((doc) => ({
           id: doc.id,
           data: doc.data(),
-        })).filter((success) => success.data.userId === optionalParameter);
-     
-  
+        }))
+        .filter((success) => success.data.userId === optionalParameter)
+        .sort((a, b) => b.data.createdAt.toDate().getTime() - a.data.createdAt.toDate().getTime());
+
       setSuccess(successData);
     } catch (error) {
       console.error('Error fetching success data:', error);
@@ -46,15 +47,14 @@ const viewSuccess = () => {
         console.error('ID is undefined or null');
         return;
       }
-  
+
       const docRef = doc(db, 'shelters', optionalParameter);
       const docSnap = await getDoc(docRef);
-  
+
       if (docSnap.exists()) {
         const data = docSnap.data();
         setShelterData(data); // Set all shelter data to state
       } else {
-
         console.log('No such document!');
       }
     } catch (error) {
@@ -87,76 +87,81 @@ const viewSuccess = () => {
     },
   ];
 
+  const renderItem = ({ item }) => (
+    <View key={item.id} className="bg-white mt-4">
+      <View className="justify-start items-start mt-2">
+        <View className="flex-row justify-center items-center ml-2">
+          <Image
+            source={{ uri: item.data.profilePicture }}
+            style={{
+              width: 40,
+              height: 40,
+              resizeMode: 'contain',
+              borderRadius: 20,
+            }}
+          />
+          <Text className="text-turqoise font-pbold text-lg ml-2">
+            {item.data.username}
+          </Text>
+        </View>
+
+        <View className="mt-2 mb-2">
+          <Image
+            source={{ uri: item.data.imageUrl }}
+            style={{
+              width: 358,
+              height: 400,
+            }}
+          />
+        </View>
+
+        <View className='ml-2 mb-2'>
+          <LikeButton postId={item.id} collectionName={"success"} initialLikes={(item.data.likedBy && item.data.likedBy.length) || 0} />
+        </View>
+
+        <View className="flex flex-row ml-2 items-center mb-2">
+          <Text className="text-turqoise font-pbold text-lg">
+            {item.data.username}
+          </Text>
+          <Text className="text-darkBrown font-pregular text-reg ml-3">
+            {item.data.caption}
+          </Text>
+        </View>
+      </View>
+
+      <View className='mb-4'>
+        <CommentSection postId={item.id} />
+      </View>
+    </View>
+  );
+
+  const renderHeader = () => (
+    <View>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <BackButton
+          containerStyles="p-3 rounded-xl mb-4"
+          textStyles="text-turqoise"
+        />
+        <Text className="pl-20 pb-18 text-turqoise font-gb mt-4 text-5xl mb-4">
+          {shelterData?.username}
+        </Text>
+      </View>
+      <HorizontalBar data={navigationData} optionalParameter={optionalParameter} />
+    </View>
+  );
+
   return (
     <SafeAreaView className="bg-bgc h-full">
-      <ScrollView
+      <FlatList
+        data={success}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      >
-        <View className="w-full h-full justify-start px-4 py-10">
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <BackButton 
-              containerStyles="p-3 rounded-xl mb-4" 
-              textStyles="text-turqoise" 
-            />
-            <Text className="pl-20 pb-18 text-turqoise font-gb mt-4 text-5xl mb-4">
-              {shelterData?.username}
-            </Text>
-          </View>
-          <HorizontalBar data={navigationData} optionalParameter={optionalParameter} />
-
-          {success.reverse().map((s) => (
-            <View key={s.id} className="bg-white mt-4">
-              <View className="justify-start items-start mt-2">
-                <View className="flex-row justify-center items-center ml-2">
-                  <Image
-                    source={{ uri: s.data.profilePicture }}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      resizeMode: 'contain',
-                      borderRadius: 20,
-                    }}
-                  />
-                  <Text className="text-turqoise font-pbold text-lg ml-2">
-                    {s.data.username}
-                  </Text>
-                </View>
-
-                <View className="mt-2 mb-2">
-                  <Image
-                    source={{ uri: s.data.imageUrl }}
-                    style={{
-                      width: 358,
-                      height: 400,
-
-                    }}
-                  />
-                </View>
-
-                <View className='ml-2 mb-2'>
-                  <LikeButton postId={s.id} collectionName={"success"} initialLikes={(s.data.likedBy && s.data.likedBy.length) || 0} />
-                </View>
-
-                <View className="flex flex-row ml-2 items-center mb-2">
-                  <Text className="text-turqoise font-pbold text-lg">
-                    {s.data.username}
-                  </Text>
-                  <Text className="text-darkBrown font-pregular text-reg ml-3">
-                    {s.data.caption}
-                  </Text>
-                </View>
-
-              </View>
-
-              <View className='mb-4'>
-                <CommentSection postId={s.id}/>
-              </View>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+        ListHeaderComponent={renderHeader}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 10 }}
+      />
     </SafeAreaView>
   );
 };
