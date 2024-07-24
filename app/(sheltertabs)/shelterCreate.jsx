@@ -26,34 +26,43 @@ const PostShelterImage = () => {
     breed: '',
     property: '',
     status: 'available',
+    searchable: '',
   });
 
+  const createSearchableString = (details) => {
+    const { age, name, species, sex, breed, property, status } = details;
+    return `${age} ${name} ${species} ${sex} ${breed} ${property} ${status}`.toLowerCase();
+  };
+
   const handlePropertyChange = (value) => {
-    setPetDetails((prevPetDetails) => ({
-      ...prevPetDetails,
-      property: value,
-    }));
+    setPetDetails((prevPetDetails) => {
+      const updatedDetails = { ...prevPetDetails, property: value };
+      return { ...updatedDetails, searchable: createSearchableString(updatedDetails) };
+    });
   };
 
   const handleSpeciesChange = (value) => {
-    setPetDetails((prevPetDetails) => ({
-      ...prevPetDetails,
-      species: value,
-    }));
+    setPetDetails((prevPetDetails) => {
+      const updatedDetails = { ...prevPetDetails, species: value };
+      return { ...updatedDetails, searchable: createSearchableString(updatedDetails) };
+    });
   };
 
   const handlePetDetailsChange = (field, value) => {
-    setPetDetails((prevDetails) => ({
-      ...prevDetails,
-      [field]: value,
-    }));
+    setPetDetails((prevDetails) => {
+      const updatedDetails = { ...prevDetails, [field]: value };
+      return { ...updatedDetails, searchable: createSearchableString(updatedDetails) };
+    });
   };
 
   const toggleStatus = () => {
-    setPetDetails((prevDetails) => ({
-      ...prevDetails,
-      status: prevDetails.status === 'available' ? 'pending adoption' : prevDetails.status === 'pending adoption' ? 'adopted' : 'available',
-    }));
+    setPetDetails((prevDetails) => {
+      const updatedDetails = {
+        ...prevDetails,
+        status: prevDetails.status === 'available' ? 'adopted' : 'available',
+      };
+      return { ...updatedDetails, searchable: createSearchableString(updatedDetails) };
+    });
   };
 
   const pickImageAsync = async () => {
@@ -127,7 +136,9 @@ const PostShelterImage = () => {
           sex:'',
           species: '',
           breed: '',
-          status: 'available'
+          property: '',
+          status: 'available',
+          searchable: ''
         });
       } else {
         Alert.alert('You must select an image and add a caption.');
@@ -159,7 +170,7 @@ const PostShelterImage = () => {
 
           <View className="items-center">
             {selectedImage ? (
-              <Image source={{ uri: selectedImage }} style={{ width: 300, height: 300 }} />
+              <Image source={{ uri: selectedImage }} style={{ width: 300, height: 300 } } />
             ) : (
               <Text>No image selected</Text>
             )}
@@ -196,7 +207,7 @@ const PostShelterImage = () => {
                 { label: 'Success Stories', value: 'Success Stories' },
               ]}
             />
-
+            
             <View className="mb-2">
               <Text className="text-darkBrown font-pmedium text-md">Selected Post Type: {post.postType}</Text>
             </View>
@@ -252,20 +263,22 @@ const PostShelterImage = () => {
                 }}
               />
 
-              <Text className="text-turqoise font-pregular mt-4 text-base mx-2">Species:</Text>
-              <CustomPicker
-                selectedValue={petDetails.species}
-                onValueChange={handleSpeciesChange}
-                items={[
-                  { label: 'Dog', value: 'Dog' },
-                  { label: 'Cat', value: 'Cat' },
-                  { label: 'Rabbit', value: 'Rabbit' },
-                  { label: 'Others', value: 'Others' }
-                ]}
-              />
-              <View className="mb-2">
-                <Text className="text-turqoise font-pregular text-base mx-2">Selected Species: {petDetails.species}</Text>
-              </View>
+            <Text className="text-turqoise font-pregular mt-4 text-base mx-2">Species:</Text>
+            <CustomPicker
+              selectedValue={petDetails.species}
+              onValueChange={handleSpeciesChange}
+              items={[
+                { label: 'Dog', value: 'Dog' },
+                { label: 'Cat', value: 'Cat' },
+                { label: 'Rabbit', value: 'Rabbit' },
+                { label: 'Others', value: 'Others' }
+              ]}
+            />
+            <View className="mb-2">
+              <Text className="text-turqoise font-pregular text-md mx-2">Selected Species: {petDetails.species}</Text>
+            </View>
+
+            <View className='border-b border-turqoise'></View>
 
               <TextInput
                 placeholder="Breed:"
@@ -283,16 +296,30 @@ const PostShelterImage = () => {
                 }}
               />
 
-              <View className="mb-2">
-                <Text className="text-turqoise font-pregular text-base mx-2 mb-2">
-                  Status: <Text style={{ color: 'red' }}>{petDetails.status}</Text>
-                </Text>
-                <EmailButton
-                  title='Toggle Status'
-                  handlePress={toggleStatus}
-                  containerStyles={`bg-darkbrown `}
-                />
+            <Text className="text-turqoise font-pregular mt-4 text-base mx-2">Property Type:</Text>
+            <CustomPicker
+              selectedValue={petDetails.property}
+              onValueChange={handlePropertyChange}
+              items={[
+                { label: 'HDB', value: 'HDB' },
+                { label: 'Condominium', value: 'Condominium' },
+                { label: 'Landed', value: 'Landed' },
+              ]}
+            />
+            <View className="mb-2">
+              <Text className="text-turqoise font-pregular text-md mx-2">Selected Property Type: {petDetails.property}</Text>
+            </View>
+
+            <View className='border-b border-turqoise mb-5'></View>
+
+              
+              <View className="flex items-center my-2.5">
+                <TouchableOpacity onPress={toggleStatus} className="bg-[#416F82] p-2.5 rounded">
+                  <Text className="text-white font-poppins-regular">Status (Current: {petDetails.status})</Text>
+                 </TouchableOpacity>
               </View>
+
+
             </View>
           )}
 
@@ -302,6 +329,7 @@ const PostShelterImage = () => {
             isLoading={isSubmitting}
             containerStyles={`bg-turqoise`}
           /> 
+
         </View>
       </ScrollView>
     </SafeAreaView>

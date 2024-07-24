@@ -13,6 +13,7 @@ import eye from "../assets/icons/eye.png";
 import play from "../assets/icons/play.png";
 import profiletab from "../assets/icons/profiletab.png";
 import livechat from "../assets/icons/livechat.png";
+import filter from "../assets/icons/filter.png";
 
 export default {
   play,
@@ -30,4 +31,5 @@ export default {
   eye,
   profiletab,
   livechat,
+  filter,
 };

@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, Image } from 'react-native';
+import { router } from 'expo-router';
+
+import { icons } from '../constants';
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState('');
@@ -18,10 +21,20 @@ const SearchBar = ({ onSearch }) => {
         onChangeText={setQuery}
       />
       <TouchableOpacity
-        className="ml-2 px-4 py-2 bg-turqoise rounded"
+        className="ml-2 px-4 py-2.5 bg-turqoise rounded"
         onPress={handleSearch}
       >
         <Text className="text-white font-plight">Go!</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        className="ml-1"
+        onPress={() => router.push('filter')}
+      >
+        <Image
+          source={icons.filter}
+          style={{ width: 40, height: 40 }}
+        />
       </TouchableOpacity>
     </View>
   );

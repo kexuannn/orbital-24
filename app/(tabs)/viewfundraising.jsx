@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { icons } from '../../constants';
-import HorizontalBar from '../../components/CustomHorizontalBar';
-import { db, auth } from '../../firebase.config';
 import { doc, getDocs, collection, getDoc } from 'firebase/firestore';
 import { useRoute } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+
+import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
 import BackButton from '../../components/CustomBackButton';
+import EmailButton from '../../components/EmailButton';
+import { db } from '../../firebase.config';
 
 const viewFundraising = () => {
   const route = useRoute();
   const { optionalParameter } = route.params;
+  const router = useRouter();
 
   const [fundraising, setFundraising] = useState([]);
   const [shelterData, setShelterData] = useState(null);
@@ -149,6 +152,7 @@ const viewFundraising = () => {
               </View>
             </View>
           ))}
+
         </View>
       </ScrollView>
     </SafeAreaView>

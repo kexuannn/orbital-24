@@ -135,7 +135,7 @@ const Search = () => {
   const searchPets = async (searchTerm) => {
     try {
       const dataCollectionRef = collection(db, 'petListing');
-      const q = query(dataCollectionRef, where('species', '>=', searchTerm), where('species', '<=', searchTerm + '\uf8ff'));
+      const q = query(dataCollectionRef, where('searchable', '>=', searchTerm), where('searchable', '<=', searchTerm + '\uf8ff'));
       const querySnapshot = await getDocs(q);
       const data = querySnapshot.docs.map(doc => doc.id);  // Only get the IDs
       router.push({ pathname: 'searchResults', params: { post: data }});  // Route the IDs

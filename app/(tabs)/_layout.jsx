@@ -158,6 +158,15 @@ const TabsLayout = () => {
           }}
         />
 
+        <Tabs.Screen
+          name='filter'
+          options={{
+            title: 'filter',
+            href: null,
+            headerShown: false,
+          }}
+        />
+
         
       </Tabs>
       
