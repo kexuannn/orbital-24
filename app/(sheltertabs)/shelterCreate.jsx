@@ -57,14 +57,20 @@ const PostShelterImage = () => {
 
   const toggleStatus = () => {
     setPetDetails((prevDetails) => {
+      const statuses = ['available', 'pending adoption', 'adopted'];
+      const currentIndex = statuses.indexOf(prevDetails.status);
+      const nextIndex = (currentIndex + 1) % statuses.length;
       const updatedDetails = {
         ...prevDetails,
-        status: prevDetails.status === 'available' ? 'adopted' : 'available',
+        status: statuses[nextIndex],
       };
-      return { ...updatedDetails, searchable: createSearchableString(updatedDetails) };
+      return {
+        ...updatedDetails,
+        searchable: createSearchableString(updatedDetails),
+      };
     });
   };
-
+  
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,

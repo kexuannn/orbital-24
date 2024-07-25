@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { useRouter } from 'expo-router';
+import { useRoute } from '@react-navigation/native';
 
 import SearchBar from '../../components/SearchBar'
 import { db, auth } from '../../firebase.config'
@@ -17,6 +18,7 @@ const Search = () => {
   const [userData, setUserData] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [detailsVisibility, setDetailsVisibility] = useState({});
+
 
   const toggleDetails = (postId) => {
     setDetailsVisibility((prevState) => ({
@@ -70,17 +72,18 @@ const Search = () => {
   
         const dataCollectionRef = collection(db, 'petListing');
   
-        // Initial query to filter by both species and property
         let q = query(
           dataCollectionRef,
           where('species', 'in', normalizedDesiredPets),
-          where('property', '==', property) 
+          where('property', '==', property)
         );
   
         let querySnapshot = await getDocs(q);
-        let data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        let data = querySnapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()); // Sort by createdAt
   
-        // If the initial query returns no results, filter by species only
+        // If initial query returns no results, filter by species only
         if (data.length === 0) {
           q = query(
             dataCollectionRef,
@@ -88,7 +91,9 @@ const Search = () => {
           );
   
           querySnapshot = await getDocs(q);
-          data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          data = querySnapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()); // Sort by createdAt
         }
   
         setFilteredData(data);
@@ -96,7 +101,21 @@ const Search = () => {
     } catch (error) {
       console.error('Error fetching filtered data:', error);
     }
-  };  
+  };
+  
+  
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'available':
+        return 'green';
+      case 'adopted':
+        return 'red';
+      case 'pending adoption':
+        return 'blue';
+      default:
+        return 'black';
+    }
+  };
 
   const toggleBookmark = async (postId) => {
     try {
@@ -161,6 +180,18 @@ const Search = () => {
       fetchFilteredData();
     }
   }, [userData]);
+  
+  const formatDate = (timestamp) => {
+    if (timestamp) {
+      const date = timestamp.toDate(); 
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return 'No Date'; 
+  };
 
   return (
     <SafeAreaView className="bg-bgc h-full">
@@ -182,7 +213,7 @@ const Search = () => {
 
           <Text className="text-xl font-plight text-turqoise">Suggested pets for you:</Text>
 
-          {filteredData.reverse().map((fd) => (
+          {filteredData.map((fd) => (
             <View key={fd.id} className="bg-white mt-4">
               <View className="justify-start items-start mt-2">
                 <View className="flex-row justify-center items-center ml-2">
@@ -232,10 +263,14 @@ const Search = () => {
                     {fd.caption}
                   </Text>
                 </View>
+                <Text className="text-darkBrown font-pregular text-xs ml-2">
+                    Posted on: {formatDate(fd.createdAt)}
+                </Text>
 
                 <View>
-                  <Text className="text-darkBrown font-pregular text-lg ml-2">
-                      status: {fd.status}
+                  <Text className="text-turqoise font-pbold text-lg ml-2">
+                    Status: 
+                    <Text style={{ color: getStatusColor(fd.status) }}> {fd.status}</Text>
                   </Text>
                 </View>
 
