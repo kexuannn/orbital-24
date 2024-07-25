@@ -32,22 +32,50 @@ const SearchResults = () => {
         console.log('No valid IDs provided.');
         return;
       }
-
+  
       const postsCollection = collection(db, 'petListing');
       const q = query(postsCollection, where('__name__', 'in', postArray));
       const snapshot = await getDocs(q);
-
+  
       if (snapshot.empty) {
         console.log('No matching documents found.');
       } else {
-        const resultData = snapshot.docs.map((doc) => ({
+        let resultData = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+  
+        // Sort the resultData by createdAt
+        resultData.sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime());
+  
         setResults(resultData);
       }
     } catch (error) {
       console.error('Error fetching pet listings:', error);
+    }
+  };
+  
+  const formatDate = (timestamp) => {
+    if (timestamp) {
+      const date = timestamp.toDate(); 
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return 'No Date'; 
+  };
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'available':
+        return 'green';
+      case 'adopted':
+        return 'red';
+      case 'pending adoption':
+        return 'blue';
+      default:
+        return 'black';
     }
   };
 
@@ -124,7 +152,7 @@ const SearchResults = () => {
           </View>
 
           {results.length > 0 ? (
-            results.reverse().map((result) => (
+            results.map((result) => (
               <View key={result.id} className="bg-white mt-4">
                 <View className="justify-start items-start mt-2">
                   <View className="flex-row justify-center items-center ml-2">
@@ -174,11 +202,15 @@ const SearchResults = () => {
                       {result.caption}
                     </Text>
                   </View>
+                  <Text className="text-darkBrown font-pregular text-xs ml-2">
+                    Posted on: {formatDate(result.createdAt)}
+                  </Text>
 
                   <View>
-                    <Text className="text-darkBrown font-pregular text-lg ml-2">
-                      status: {result.status}
-                    </Text>
+                  <Text className="text-turqoise font-pbold text-lg ml-2">
+                    Status: 
+                    <Text style={{ color: getStatusColor(result.status) }}> {result.status}</Text>
+                  </Text>
                   </View>
 
                   <View className="w-full justify-start px-4 mb-4">

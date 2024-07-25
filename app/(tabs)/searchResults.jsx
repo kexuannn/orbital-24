@@ -51,6 +51,30 @@ const SearchResults = () => {
     }
   };
 
+  const formatDate = (timestamp) => {
+    if (timestamp) {
+      const date = timestamp.toDate(); 
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return 'No Date'; 
+  };
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'available':
+        return 'green';
+      case 'adopted':
+        return 'red';
+      case 'pending adoption':
+        return 'blue';
+      default:
+        return 'black';
+    }
+  };
+
   useEffect(() => {
     fetchResults();
   }, []);
@@ -175,10 +199,15 @@ const SearchResults = () => {
                     </Text>
                   </View>
 
+                  <Text className="text-darkBrown font-pregular text-xs ml-2">
+                    Posted on: {formatDate(result.createdAt)}
+                  </Text>
+
                   <View>
-                    <Text className="text-darkBrown font-pregular text-lg ml-2">
-                      status: {result.status}
-                    </Text>
+                  <Text className="text-turqoise font-pbold text-lg ml-2">
+                    Status: 
+                    <Text style={{ color: getStatusColor(result.status) }}> {result.status}</Text>
+                  </Text>
                   </View>
 
                   <View className="w-full justify-start px-4 mb-4">

@@ -55,13 +55,21 @@ const FilterPage = () => {
       }
   
       const querySnapshot = await getDocs(q);
+  
+      if (querySnapshot.empty) {
+        console.log('No matching documents found.');
+        // Handle case where no documents match the filters
+        return;
+      }
+  
       const data = querySnapshot.docs.map(doc => doc.id);
   
-      router.push({ pathname: 'FilterResults', params: { post: data }});
+      router.push({ pathname: 'FilterResults', params: { post: data } });
     } catch (error) {
       console.error('Error applying filters:', error);
     }
   };
+  
   
 
   return (
