@@ -175,7 +175,14 @@ const Home = () => {
                   <Text className="text-turqoise font-pbold text-lg">
                     {post.data.username}
                   </Text>
-                  <Text className="text-darkBrown font-pregular text-lg ml-3">
+                  <Text
+                    className="text-darkBrown font-pregular text-medium ml-3"
+                    style={{
+                      flex: 1,
+                      flexWrap: 'wrap',
+                      maxWidth: screenWidth - 32,
+                    }}
+                  >
                     {post.data.caption}
                   </Text>
                 </View>

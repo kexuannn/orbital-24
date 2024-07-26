@@ -9,10 +9,12 @@ import { useRoute } from '@react-navigation/native';
 import LikeButton from '../../components/CustomLikeButton';
 import BackButton from '../../components/CustomBackButton';
 import EmailButton from '../../components/EmailButton';
+import { useRouter } from 'expo-router';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 const ViewHome = () => {
+  const router = useRouter();
   const route = useRoute();
   const { id } = route.params;
 
@@ -50,10 +52,10 @@ const ViewHome = () => {
     try {
       const docRef = doc(db, 'shelters', id);
       const docSnap = await getDoc(docRef);
-
+  
       if (docSnap.exists) {
         const data = docSnap.data();
-        setShelterData(data); // Set all shelter data to state
+        setShelterData(data);
       } else {
         console.log('No such document!');
       }
@@ -61,7 +63,7 @@ const ViewHome = () => {
       console.error('Error fetching shelter data:', error);
     }
   };
-
+  
   const fetchBookmarkedPets = async () => {
     try {
       const user = auth.currentUser;
@@ -153,7 +155,6 @@ const ViewHome = () => {
     return 'No Date'; 
   };
 
-
   const navigationData = [
     {
       id: '1',
@@ -179,15 +180,22 @@ const ViewHome = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View className="w-full h-full justify-start px-4 py-10 ">
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View className="w-full h-full px-4 py-10">
+          <View className="flex-row items-center justify-between">
             <BackButton 
               containerStyles="p-3 rounded-xl mb-4" 
               textStyles="text-turqoise" 
             />
-            <Text className="pl-20 pb-18 text-turqoise font-gb mt-4 text-5xl mb-4">
-              {shelterData?.username}
-            </Text>
+            <View className="flex-1 items-center">
+              <TouchableOpacity
+                onPress={() => router.push({ pathname: 'viewshelterprofile', params: { userId: id } })}
+                className="flex-row justify-center"
+              >
+                <Text className="text-turqoise font-gb text-5xl text-center">
+                  {shelterData?.username}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <HorizontalBar data={navigationData} optionalParameter={id} />
@@ -214,15 +222,15 @@ const ViewHome = () => {
                   <Image
                     source={{ uri: p.data.imageUrl }}
                     style={{
-                    width: screenWidth - 32, // Width of the screen minus padding
-                    height: (screenWidth - 32), // Maintain aspect ratio
-                    resizeMode: 'cover',
-                    marginVertical: 10,
+                      width: screenWidth - 32, // Width of the screen minus padding
+                      height: (screenWidth - 32), // Maintain aspect ratio
+                      resizeMode: 'cover',
+                      marginVertical: 10,
                     }}
                   />
                 </View>
 
-                <View className='flex flex-row ml-2 mb-2'>
+                <View className="flex flex-row ml-2 mb-2">
                   <LikeButton postId={p.id} collectionName={"petListing"} initialLikes={(p.data.likedBy && p.data.likedBy.length) || 0} />
                   <TouchableOpacity onPress={() => toggleBookmark(p.id)} style={{ marginLeft: 10 }}>
                     <Image 
@@ -230,7 +238,9 @@ const ViewHome = () => {
                       style={{ 
                         width: 20, 
                         height: 20, 
-                        tintColor: bookmarkedPets.includes(p.id) ? '#416F82' : 'gray' }} />
+                        tintColor: bookmarkedPets.includes(p.id) ? '#416F82' : 'gray' 
+                      }} 
+                    />
                   </TouchableOpacity>
                 </View>
 
@@ -243,7 +253,7 @@ const ViewHome = () => {
                   </Text>
                 </View>
                 <Text className="text-darkBrown font-pregular text-xs ml-2">
-                    Posted on: {formatDate(p.data.createdAt)}
+                  Posted on: {formatDate(p.data.createdAt)}
                 </Text>
 
                 <View className="flex-row justify-center items-center ml-2 mt-2">
@@ -253,37 +263,27 @@ const ViewHome = () => {
                   </Text>
                 </View>
 
-
                 <View className="w-full justify-start px-4 mb-4">
                   <EmailButton
                     title={detailsVisibility[p.id] ? 'Hide Details' : 'Show Details'}
                     handlePress={() => toggleDetails(p.id)}
-                    containerStyles="mt-7 bg-turqoise"
+                    containerStyles="mt-7 bg-turqoise rounded-full"
+                    textStyles="text-white font-pbold"
                   />
+                  {detailsVisibility[p.id] && (
+                    <View className="px-4 py-2">
+                      <Text className="text-darkBrown font-pregular text-sm">
+                        Age: {p.data.age}
+                      </Text>
+                      <Text className="text-darkBrown font-pregular text-sm">
+                        Species: {p.data.species}
+                      </Text>
+                      <Text className="text-darkBrown font-pregular text-sm">
+                        Breed: {p.data.breed}
+                      </Text>
+                    </View>
+                  )}
                 </View>
-
-                {detailsVisibility[p.id] && (
-                  <View className="ml-2 mb-2">
-                    <Text className="text-darkBrown font-pregular text-lg">
-                      Name: {p.data.name}
-                    </Text>
-                    <Text className="text-darkBrown font-pregular text-lg">
-                      Age (in years): {p.data.age}
-                    </Text>
-                    <Text className="text-darkBrown font-pregular text-lg">
-                      Species: {p.data.species}
-                    </Text>
-                    <Text className="text-darkBrown font-pregular text-lg">
-                      Sex: {p.data.sex}
-                    </Text>
-                    <Text className="text-darkBrown font-pregular text-lg">
-                      Breed: {p.data.breed}
-                    </Text>
-                    <Text className="text-darkBrown font-pregular text-lg">
-                      Property Type: {p.data.property}
-                    </Text>
-                  </View>
-                )}
               </View>
             </View>
           ))}

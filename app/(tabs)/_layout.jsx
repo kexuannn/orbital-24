@@ -54,6 +54,22 @@ const TabsLayout = () => {
         /> 
 
         <Tabs.Screen
+          name='viewshelterprofile'
+          options={{
+            title:'viewshelterprofile',
+            headerShown: false,
+            href: null,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon = {icons.home}
+                color = {color}
+                focused = {focused}
+              />
+            )
+          }}
+        /> 
+
+        <Tabs.Screen
           name='maps'
           options={{
             title:'maps',
