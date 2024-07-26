@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
+import { View, Text, ScrollView, Image, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { onSnapshot, doc, collection } from "firebase/firestore";
 import { db, auth } from '../../firebase.config';
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const Fundraising = () => {
   const [fundraising, setFundraising] = useState([]);
@@ -133,7 +135,12 @@ const Fundraising = () => {
                 <View className='mt-2 mb-2'>
                   <Image
                     source={{ uri: fundr.data.imageUrl }}
-                    style={{ width: 358, height: 400}}
+                    style={{
+                    width: screenWidth - 32, // Width of the screen minus padding
+                    height: (screenWidth - 32), // Maintain aspect ratio
+                    resizeMode: 'cover',
+                    marginVertical: 10,
+                    }}
                   />
                 </View>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DeleteButton from '../../components/CustomDeletePostButton';
 import EmailButton from '../../components/EmailButton';
@@ -7,6 +7,8 @@ import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
 import { db, auth } from '../../firebase.config';
 import { doc, getDocs, collection, getDoc, updateDoc} from 'firebase/firestore';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const PetListing = () => {
   const [pet, setPet] = useState([]);
@@ -168,7 +170,7 @@ const PetListing = () => {
           <HorizontalBar data={navigationData} />
 
           {pet.map((p) => (
-            <View key={p.id} className="bg-white mt-4">
+            <View key={p.id} className="bg-white mt-4 flex-1">
               <View className="justify-start items-start mt-2">
                 <View className="flex-row justify-between items-center ml-2">
                 <View className="flex-row items-center">
@@ -200,8 +202,10 @@ const PetListing = () => {
                   <Image
                     source={{ uri: p.data.imageUrl }}
                     style={{
-                      width: 358,
-                      height: 400,
+                    width: screenWidth - 32, // Width of the screen minus padding
+                    height: (screenWidth - 32), // Maintain aspect ratio
+                    resizeMode: 'cover',
+                    marginVertical: 10,
                     }}
                   />
                 </View>

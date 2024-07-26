@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, RefreshControl } from 'react-native';
+import { View, Text, Image, FlatList, RefreshControl, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useRouter } from 'expo-router';
 
-import EmailButton from '../../components/EmailButton';
-import CustomWebsiteButton from '../../components/CustomWebsiteButton';
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
 import { db, auth } from '../../firebase.config';
 import { doc, getDocs, collection, getDoc } from "firebase/firestore";
 import CommentSection from '../../components/Comments';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const Success = () => {
   const [success, setSuccess] = useState([]);
@@ -115,7 +114,12 @@ const Success = () => {
         <View className='mt-2 mb-2'>
           <Image
             source={{ uri: item.data.imageUrl }}
-            style={{ width: 358, height: 400 }}
+            style={{
+            width: screenWidth - 32, // Width of the screen minus padding
+            height: (screenWidth - 32), // Maintain aspect ratio
+            resizeMode: 'cover',
+            marginVertical: 10,
+            }}
           />
         </View>
         <View className='ml-2 mb-2'>

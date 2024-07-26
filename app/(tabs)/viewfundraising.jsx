@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, Image, RefreshControl, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { icons } from '../../constants';
+
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import { db, auth } from '../../firebase.config';
 import { doc, getDocs, collection, getDoc } from 'firebase/firestore';
 import { useRoute } from '@react-navigation/native';
 import LikeButton from '../../components/CustomLikeButton';
 import BackButton from '../../components/CustomBackButton';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const viewFundraising = () => {
   const route = useRoute();
@@ -144,8 +146,10 @@ const viewFundraising = () => {
                   <Image
                     source={{ uri: fund.data.imageUrl }}
                     style={{
-                      width: 358,
-                      height: 400,
+                    width: screenWidth - 32, // Width of the screen minus padding
+                    height: (screenWidth - 32), // Maintain aspect ratio
+                    resizeMode: 'cover',
+                    marginVertical: 10,
                     }}
                   />
                 </View>

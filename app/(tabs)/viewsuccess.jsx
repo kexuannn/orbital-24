@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, RefreshControl, FlatList } from 'react-native';
+import { View, Text, Image, RefreshControl, FlatList, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import HorizontalBar from '../../components/CustomHorizontalBar';
@@ -9,6 +9,8 @@ import { useRoute } from '@react-navigation/native';
 import BackButton from '../../components/CustomBackButton';
 import LikeButton from '../../components/CustomLikeButton';
 import CommentSection from '../../components/Comments';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const viewSuccess = () => {
   const route = useRoute();
@@ -109,8 +111,10 @@ const viewSuccess = () => {
           <Image
             source={{ uri: item.data.imageUrl }}
             style={{
-              width: 358,
-              height: 400,
+            width: screenWidth - 32, // Width of the screen minus padding
+            height: (screenWidth - 32), // Maintain aspect ratio
+            resizeMode: 'cover',
+            marginVertical: 10,
             }}
           />
         </View>

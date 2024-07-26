@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, Image, RefreshControl, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import EmailButton from '../../components/EmailButton';
@@ -7,6 +7,8 @@ import LikeButton from '../../components/CustomLikeButton';
 import CustomWebsiteButton from '../../components/CustomWebsiteButton';
 import { db } from '../../firebase.config';
 import { doc, getDocs, collection } from 'firebase/firestore';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const Home = () => {
   const router = useRouter();
@@ -137,9 +139,10 @@ const Home = () => {
                   <Image
                     source={{ uri: post.data.imageUrl }}
                     style={{
-                      width: 358,
-                      height: 400,
-
+                    width: screenWidth - 32, // Width of the screen minus padding
+                    height: (screenWidth - 32), // Maintain aspect ratio
+                    resizeMode: 'cover',
+                    marginVertical: 10,
                     }}
                   />
                 </View>

@@ -1,15 +1,16 @@
-import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity, Dimensions } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
 import { useRouter } from 'expo-router';
-import { useRoute } from '@react-navigation/native';
 
 import SearchBar from '../../components/SearchBar'
 import { db, auth } from '../../firebase.config'
 import LikeButton from '../../components/CustomLikeButton'
 import { icons } from '../../constants'
 import EmailButton from '../../components/EmailButton'
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const Search = () => {
   const router = useRouter();
@@ -153,15 +154,38 @@ const Search = () => {
 
   const searchPets = async (searchTerm) => {
     try {
+      const searchTermLower = searchTerm.trim().toLowerCase();
+  
+      if (!searchTermLower) {
+        console.log('Search term is empty.');
+        router.push({ pathname: 'searchResults', params: { post: [] } });
+        return;
+      }
+  
       const dataCollectionRef = collection(db, 'petListing');
-      const q = query(dataCollectionRef, where('searchable', '>=', searchTerm), where('searchable', '<=', searchTerm + '\uf8ff'));
+  
+      // Construct the query to search within 'searchableTokens'
+      const q = query(
+        dataCollectionRef,
+        where('searchableTokens', 'array-contains', searchTermLower)
+      );
+  
       const querySnapshot = await getDocs(q);
-      const data = querySnapshot.docs.map(doc => doc.id);  // Only get the IDs
-      router.push({ pathname: 'searchResults', params: { post: data }});  // Route the IDs
+  
+      if (querySnapshot.empty) {
+        console.log('No matching documents found.');
+        router.push({ pathname: 'searchResults', params: { post: [] } });
+        return;
+      }
+  
+      const data = querySnapshot.docs.map(doc => doc.id);
+      console.log('Matching document IDs:', data);
+  
+      router.push({ pathname: 'searchResults', params: { post: data } });
     } catch (error) {
       console.error('Error searching pets:', error);
     }
-  };  
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -235,8 +259,10 @@ const Search = () => {
                   <Image
                     source={{ uri: fd.imageUrl }}
                     style={{
-                      width: 358,
-                      height: 400,
+                    width: screenWidth - 32, // Width of the screen minus padding
+                    height: (screenWidth - 32), // Maintain aspect ratio
+                    resizeMode: 'cover',
+                    marginVertical: 10,
                     }}
                   />
                 </View>

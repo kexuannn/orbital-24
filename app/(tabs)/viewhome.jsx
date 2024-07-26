@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, Image, RefreshControl, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { icons } from '../../constants';
 import HorizontalBar from '../../components/CustomHorizontalBar';
@@ -9,6 +9,8 @@ import { useRoute } from '@react-navigation/native';
 import LikeButton from '../../components/CustomLikeButton';
 import BackButton from '../../components/CustomBackButton';
 import EmailButton from '../../components/EmailButton';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const ViewHome = () => {
   const route = useRoute();
@@ -212,8 +214,10 @@ const ViewHome = () => {
                   <Image
                     source={{ uri: p.data.imageUrl }}
                     style={{
-                      width: 358,
-                      height: 400,
+                    width: screenWidth - 32, // Width of the screen minus padding
+                    height: (screenWidth - 32), // Maintain aspect ratio
+                    resizeMode: 'cover',
+                    marginVertical: 10,
                     }}
                   />
                 </View>

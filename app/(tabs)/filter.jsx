@@ -15,12 +15,13 @@ const FilterPage = () => {
   const [selectedSpecies, setSelectedSpecies] = useState([]);
   const [propertyType, setPropertyType] = useState('');
   const [ageRange, setAgeRange] = useState([0, 20]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const speciesOptions = [
-    { id: 'dog', label: 'Dog' },
-    { id: 'cat', label: 'Cat' },
-    { id: 'rabbit', label: 'Rabbit' },
-    { id: 'others', label: 'Others' },
+    { id: 'Dog', label: 'Dog' },
+    { id: 'Cat', label: 'Cat' },
+    { id: 'Rabbit', label: 'Rabbit' },
+    { id: 'Others', label: 'Others' },
   ];
   
   const propertyOptions = [
@@ -39,9 +40,10 @@ const FilterPage = () => {
 
   const applyFilters = async () => {
     try {
+      setIsSubmitting(true); // Set isSubmitting to true when starting the process
       const dataCollectionRef = collection(db, 'petListing');
       let q = query(dataCollectionRef);
-  
+      
       if (selectedSpecies.length > 0) {
         q = query(q, where('species', 'in', selectedSpecies));
       }
@@ -59,17 +61,21 @@ const FilterPage = () => {
       if (querySnapshot.empty) {
         console.log('No matching documents found.');
         // Handle case where no documents match the filters
+        setIsSubmitting(false); // Set isSubmitting to false when no documents are found
+        router.push({ pathname: 'FilterResults', params: { post: []} });
         return;
       }
   
       const data = querySnapshot.docs.map(doc => doc.id);
+      console.log('Matching document IDs:', data); // Log matching document IDs
   
       router.push({ pathname: 'FilterResults', params: { post: data } });
     } catch (error) {
       console.error('Error applying filters:', error);
+    } finally {
+      setIsSubmitting(false); // Set isSubmitting to false when process is completed
     }
   };
-  
   
 
   return (
@@ -140,6 +146,7 @@ const FilterPage = () => {
           <EmailButton
             title="Apply Filters"
             handlePress={applyFilters}
+            isLoading={isSubmitting}
             containerStyles="mt-4 bg-turqoise"
           />
         </View>

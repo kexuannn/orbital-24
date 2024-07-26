@@ -28,18 +28,18 @@ const User = () => {
   });
 
   const desiredPetOptions = [
-    { id: 'dog', label: 'Dog' },
-    { id: 'cat', label: 'Cat' },
-    { id: 'rabbit', label: 'Rabbit' },
-    { id: 'others', label: 'Others' },
+    { id: 'Dog', label: 'Dog' },
+    { id: 'Cat', label: 'Cat' },
+    { id: 'Rabbit', label: 'Rabbit' },
+    { id: 'Others', label: 'Others' },
   ];
 
   const currentPetOptions = [
-    { id: 'dog', label: 'Dog' },
-    { id: 'cat', label: 'Cat' },
-    { id: 'rabbit', label: 'Rabbit' },
-    { id: 'others', label: 'Others' },
-    { id: 'none', label: 'None' },
+    { id: 'Dog', label: 'Dog' },
+    { id: 'Cat', label: 'Cat' },
+    { id: 'Rabbit', label: 'Rabbit' },
+    { id: 'Others', label: 'Others' },
+    { id: 'None', label: 'None' },
   ];
 
   const [selectedImage, setSelectedImage] = useState(null);

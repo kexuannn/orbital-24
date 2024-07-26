@@ -33,6 +33,11 @@ const PostShelterImage = () => {
     const { age, name, species, sex, breed, property, status } = details;
     return `${age} ${name} ${species} ${sex} ${breed} ${property} ${status}`.toLowerCase();
   };
+  
+  const tokenizeString = (text) => {
+    return text.toLowerCase().split(/\s+/).filter(Boolean); 
+  };
+  
 
   const handlePropertyChange = (value) => {
     setPetDetails((prevPetDetails) => {
@@ -105,7 +110,7 @@ const PostShelterImage = () => {
       const user = auth.currentUser;
       if (user && selectedImage) {
         const imageUrl = await uploadImageAsync(selectedImage);
-
+  
         let postDocRef = null;
         if (post.postType === 'Fundraising Events') {
           postDocRef = doc(collection(db, "fundraising"), `${user.uid}_${Date.now()}`);
@@ -116,11 +121,15 @@ const PostShelterImage = () => {
         } else {
           Alert.alert('Error posting image. Please try again.');
         }
-
+  
         const userDocRef = doc(collection(db, "shelters"), user.uid);
         const userDocSnapshot = await getDoc(userDocRef);
         const username = userDocSnapshot.exists() ? userDocSnapshot.data().username : 'Unknown';
         const profilePicture = userDocSnapshot.exists() ? userDocSnapshot.data().profilePicture : 'Unknown';
+        
+        const searchableString = createSearchableString(petDetails);
+        const searchableTokens = tokenizeString(searchableString);
+  
         await setDoc(postDocRef, {
           userId: user.uid,
           username,
@@ -130,9 +139,11 @@ const PostShelterImage = () => {
           caption,
           createdAt: new Date(),
           comments: [],
-          ...petDetails
+          ...petDetails,
+          searchable: searchableString,
+          searchableTokens: searchableTokens // Store tokens
         });
-
+  
         Alert.alert('Post created successfully!');
         setSelectedImage(null);
         setCaption('');
@@ -144,7 +155,8 @@ const PostShelterImage = () => {
           breed: '',
           property: '',
           status: 'available',
-          searchable: ''
+          searchable: '',
+          searchableTokens: []
         });
       } else {
         Alert.alert('You must select an image and add a caption.');
@@ -156,7 +168,7 @@ const PostShelterImage = () => {
       setIsSubmitting(false);
     }
   };
-
+  
   const handlePostChange = (value) => {
     setPost((prevPost) => ({
       ...prevPost,
