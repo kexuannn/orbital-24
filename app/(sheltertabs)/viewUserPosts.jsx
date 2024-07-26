@@ -26,10 +26,29 @@ const viewUserPosts = () => {
         id: doc.id,
         data: doc.data(),
       }));
+  
+      postsData.sort((a, b) => {
+        const dateA = a.data.createdAt.toDate(); 
+        const dateB = b.data.createdAt.toDate(); 
+        return dateB - dateA; 
+      });
+  
       setPosts(postsData);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
+  };
+
+  const formatDate = (timestamp) => {
+    if (timestamp) {
+      const date = timestamp.toDate(); 
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return 'No Date'; 
   };
 
   const onRefresh = async () => {
@@ -77,7 +96,7 @@ const viewUserPosts = () => {
 
           <HorizontalBar data={navigationData} />
 
-          {posts.reverse().map((post) => (
+          {posts.map((post) => (
             <View key={post.id} className="bg-white mt-2">
               <View className="justify-start items-start mt-2">
                 <View className="flex-row justify-center items-center ml-2">
@@ -127,6 +146,9 @@ const viewUserPosts = () => {
                     {post.data.caption}
                   </Text>
                 </View>
+                <Text className="text-darkBrown font-pregular text-xs ml-2 mb-2">
+                    Posted on: {formatDate(post.data.createdAt)}
+                </Text>
               </View>
             </View>
           ))}

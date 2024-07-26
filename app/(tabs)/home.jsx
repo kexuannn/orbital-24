@@ -44,11 +44,31 @@ const Home = () => {
         id: doc.id,
         data: doc.data(),
       }));
+  
+      postsData.sort((a, b) => {
+        const dateA = a.data.createdAt.toDate(); 
+        const dateB = b.data.createdAt.toDate(); 
+        return dateB - dateA; 
+      });
+  
       setPosts(postsData);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   };
+
+  const formatDate = (timestamp) => {
+    if (timestamp) {
+      const date = timestamp.toDate(); 
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return 'No Date'; 
+  };
+  
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -116,7 +136,7 @@ const Home = () => {
 
           <Text className="text-xl font-plight text-turqoise">Posts for you:</Text>
 
-          {posts.reverse().map((post) => (
+          {posts.map((post) => (
             <View key={post.id} className="bg-white mt-4">
               <View className="justify-start items-start mt-2">
 
@@ -151,7 +171,7 @@ const Home = () => {
                   <LikeButton postId={post.id} collectionName={"posts"} initialLikes={(post.data.likedBy && post.data.likedBy.length) || 0} />
                 </View>
 
-                <View className="flex flex-row ml-2 items-center mb-2">
+                <View className="flex flex-row ml-2 items-center">
                   <Text className="text-turqoise font-pbold text-lg">
                     {post.data.username}
                   </Text>
@@ -159,6 +179,9 @@ const Home = () => {
                     {post.data.caption}
                   </Text>
                 </View>
+                <Text className="text-darkBrown font-pregular text-xs ml-2 mb-2">
+                    Posted on: {formatDate(post.data.createdAt)}
+                </Text>
               </View>
             </View>
           ))}
