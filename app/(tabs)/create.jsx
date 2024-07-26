@@ -45,35 +45,70 @@ const PostImage = () => {
     setIsSubmitting(true);
     try {
       const user = auth.currentUser;
-      if (user && selectedImage) {
-        const imageUrl = await uploadImageAsync(selectedImage);
-        const postDocRef = doc(collection(db, "posts"), `${user.uid}_${Date.now()}`);
-        const userDocRef = doc(collection(db, "users"), user.uid);
-        const userDocSnapshot = await getDoc(userDocRef);
-        const username = userDocSnapshot.exists() ? userDocSnapshot.data().username : 'Unknown';
-        const profilePicture = userDocSnapshot.exists() ? userDocSnapshot.data().profilePicture : 'Unknown';
-        await setDoc(postDocRef, {
-          userId: user.uid,
-          username,
-          profilePicture,
-          imageUrl,
-          caption,
-          createdAt: new Date(),
-        });
-
-        Alert.alert('Post created successfully!');
-        setSelectedImage(null);
-        setCaption('');
-      } else {
-        Alert.alert('You must select an image and add a caption.');
+      if (!user) {
+        // Handle the case where there is no authenticated user
+        Alert.alert('Error: User is not authenticated.');
+        return;
       }
+  
+      if (!selectedImage) {
+        // Handle the case where no image is selected
+        Alert.alert('You must select an image before posting.');
+        return;
+      }
+  
+      // Fetch user data from Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnapshot = await getDoc(userDocRef);
+  
+      if (!userDocSnapshot.exists()) {
+        // Handle the case where user document does not exist
+        Alert.alert('Error: User information not found.');
+        return;
+      }
+  
+      const userData = userDocSnapshot.data();
+      const username = userData.username || null;
+      const profilePicture = userData.profilePicture || null;
+  
+      if (!username || !profilePicture) {
+        // Handle the case where username or profile picture is missing
+        Alert.alert('You must fill in username and profile picture before posting.');
+        return;
+      }
+  
+      // Upload the image and get the URL
+      const imageUrl = await uploadImageAsync(selectedImage);
+  
+      // Define the post document reference
+      const postDocRef = doc(collection(db, "posts"), `${user.uid}_${Date.now()}`);
+  
+      // Create the post document
+      await setDoc(postDocRef, {
+        userId: user.uid,
+        username,
+        profilePicture,
+        imageUrl,
+        caption,
+        createdAt: new Date(),
+      });
+  
+      // Notify the user of success
+      Alert.alert('Post created successfully!');
+      
+      // Reset the form
+      setSelectedImage(null);
+      setCaption('');
     } catch (error) {
+      // Handle any errors that occur during the process
       console.error('Error posting image:', error);
       Alert.alert('Error posting image. Please try again.');
     } finally {
+      // Ensure that submission state is reset
       setIsSubmitting(false);
     }
   };
+  
 
   return (
     <SafeAreaView className="bg-bgc h-full">

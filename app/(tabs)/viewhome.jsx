@@ -191,7 +191,7 @@ const ViewHome = () => {
                 onPress={() => router.push({ pathname: 'viewshelterprofile', params: { userId: id } })}
                 className="flex-row justify-center"
               >
-                <Text className="text-turqoise font-gb text-5xl text-center">
+                <Text className="text-turqoise font-gb text-5xl text-center mr-12">
                   {shelterData?.username}
                 </Text>
               </TouchableOpacity>

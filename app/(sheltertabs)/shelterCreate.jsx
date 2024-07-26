@@ -108,7 +108,34 @@ const PostShelterImage = () => {
     setIsSubmitting(true);
     try {
       const user = auth.currentUser;
-      if (user && selectedImage) {
+      if (!user) {
+        Alert.alert('Error: User is not authenticated.');
+        setIsSubmitting(false);
+        return;
+      }
+  
+      // Fetch user data from Firestore
+      const userDocRef = doc(db, "shelters", user.uid);
+      const userDocSnapshot = await getDoc(userDocRef);
+  
+      if (!userDocSnapshot.exists()) {
+        Alert.alert('Error: User information not found.');
+        setIsSubmitting(false);
+        return;
+      }
+  
+      const userData = userDocSnapshot.data();
+      const username = userData.username || '';
+      const profilePicture = userData.profilePicture || '';
+  
+      // Check if both fields are present
+      if (!username || !profilePicture) {
+        Alert.alert('You must fill in username and profile picture before posting.');
+        setIsSubmitting(false);
+        return;
+      }
+  
+      if (selectedImage) {
         const imageUrl = await uploadImageAsync(selectedImage);
   
         let postDocRef = null;
@@ -120,13 +147,10 @@ const PostShelterImage = () => {
           postDocRef = doc(collection(db, "petListing"), `${user.uid}_${Date.now()}`);
         } else {
           Alert.alert('Error posting image. Please try again.');
+          setIsSubmitting(false);
+          return;
         }
   
-        const userDocRef = doc(collection(db, "shelters"), user.uid);
-        const userDocSnapshot = await getDoc(userDocRef);
-        const username = userDocSnapshot.exists() ? userDocSnapshot.data().username : 'Unknown';
-        const profilePicture = userDocSnapshot.exists() ? userDocSnapshot.data().profilePicture : 'Unknown';
-        
         const searchableString = createSearchableString(petDetails);
         const searchableTokens = tokenizeString(searchableString);
   
@@ -150,7 +174,7 @@ const PostShelterImage = () => {
         setPetDetails({
           name: '',
           age: '',
-          sex:'',
+          sex: '',
           species: '',
           breed: '',
           property: '',
@@ -168,6 +192,7 @@ const PostShelterImage = () => {
       setIsSubmitting(false);
     }
   };
+  
   
   const handlePostChange = (value) => {
     setPost((prevPost) => ({
