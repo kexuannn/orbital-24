@@ -6,7 +6,7 @@ import EmailButton from '../../components/EmailButton';
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
 import { db, auth } from '../../firebase.config';
-import { doc, getDocs, collection, getDoc, updateDoc} from 'firebase/firestore';
+import { doc, getDocs, collection, getDoc, updateDoc } from 'firebase/firestore';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -45,7 +45,6 @@ const PetListing = () => {
       console.error('Error fetching pet listings:', error);
     }
   };
-  
 
   const fetchShelterData = async () => {
     try {
@@ -53,10 +52,9 @@ const PetListing = () => {
       const shelterId = shelter.uid;
 
       const docRef = doc(db, 'shelters', shelterId);
-
       const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists) {
+      if (docSnap.exists()) {
         const data = docSnap.data();
         setShelterData(data);
       } else {
@@ -91,8 +89,7 @@ const PetListing = () => {
       }
       const petDocRef = doc(db, 'petListing', petId);
       await updateDoc(petDocRef, { status: newStatus });
-  
-  
+
       setPet((prevPets) =>
         prevPets.map((pet) =>
           pet.id === petId ? { ...pet, data: { ...pet.data, status: newStatus } } : pet
@@ -103,7 +100,6 @@ const PetListing = () => {
       Alert.alert('Error updating pet status. Please try again.');
     }
   };
-  
 
   const formatDate = (timestamp) => {
     if (timestamp) {
@@ -129,7 +125,6 @@ const PetListing = () => {
         return 'black';
     }
   };
-  
 
   const navigationData = [
     {
@@ -173,39 +168,38 @@ const PetListing = () => {
             <View key={p.id} className="bg-white mt-4 flex-1">
               <View className="justify-start items-start mt-2">
                 <View className="flex-row justify-between items-center ml-2">
-                <View className="flex-row items-center">
-                  <Image
-                    source={{ uri: p.data.profilePicture }}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      resizeMode: 'contain',
-                      borderRadius: 20,
-                    }}
+                  <View className="flex-row items-center">
+                    <Image
+                      source={{ uri: p.data.profilePicture }}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        resizeMode: 'contain',
+                        borderRadius: 20,
+                      }}
+                    />
+                    <Text className="text-turqoise font-pbold text-lg ml-2">
+                      {p.data.username}
+                    </Text>
+                  </View>
+
+                  <DeleteButton
+                    collectionName="petListing" 
+                    docId={p.id}
+                    containerStyles="bg-red ml-2 w-20" 
+                    textStyles="text-white font-pbold"
+                    isLoading={false} 
                   />
-                  <Text className="text-turqoise font-pbold text-lg ml-2">
-                    {p.data.username}
-                  </Text>
                 </View>
-
-                <DeleteButton
-                  collectionName="petListing" 
-                  docId={p.id}
-                  containerStyles="bg-red ml-2 w-20" 
-                  textStyles="text-white font-pbold"
-                  isLoading={false} 
-                />
-              </View>
-
 
                 <View className="mt-2 mb-1">
                   <Image
                     source={{ uri: p.data.imageUrl }}
                     style={{
-                    width: screenWidth - 32, // Width of the screen minus padding
-                    height: (screenWidth - 32), // Maintain aspect ratio
-                    resizeMode: 'cover',
-                    marginVertical: 10,
+                      width: screenWidth - 32, // Width of the screen minus padding
+                      height: (screenWidth - 32), // Maintain aspect ratio
+                      resizeMode: 'cover',
+                      marginVertical: 10,
                     }}
                   />
                 </View>
@@ -214,17 +208,17 @@ const PetListing = () => {
                   <LikeButton postId={p.id} collectionName={"petListing"} initialLikes={(p.data.likedBy && p.data.likedBy.length) || 0} />
                 </View>
 
-                <View className="flex flex-row ml-2 items-center mb-2">
-                  <Text className="text-turqoise font-pbold text-lg">
+                <View className='ml-2 mb-2'>
+                  <Text className='text-turqoise font-pbold text-lg'>
                     {p.data.username}
                   </Text>
-                  <Text className="text-darkBrown font-pregular text-lg ml-3">
+                  <Text className='text-darkBrown font-pregular text-md ml-3 flex-wrap' style={{ maxWidth: screenWidth - 32 }}>
                     {p.data.caption}
                   </Text>
                 </View>
 
                 <Text className="text-darkBrown font-pregular text-xs ml-2">
-                    Posted on: {formatDate(p.data.createdAt)}
+                  Posted on: {formatDate(p.data.createdAt)}
                 </Text>
 
                 <View className="flex-row justify-center items-center ml-2 mt-2">
@@ -241,7 +235,6 @@ const PetListing = () => {
                     </Text>
                   </TouchableOpacity>
                 </View>
-
 
                 <View className="w-full justify-start px-4 mb-4">
                   <EmailButton
@@ -260,10 +253,10 @@ const PetListing = () => {
                       Age (in years): {p.data.age}
                     </Text>
                     <Text className="text-darkBrown font-pregular text-lg">
-                      Species: {p.data.species}
+                      Sex: {p.data.sex}
                     </Text>
                     <Text className="text-darkBrown font-pregular text-lg">
-                      Sex: {p.data.sex}
+                      Species: {p.data.species}
                     </Text>
                     <Text className="text-darkBrown font-pregular text-lg">
                       Breed: {p.data.breed}

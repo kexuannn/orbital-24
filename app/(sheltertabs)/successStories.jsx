@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, RefreshControl, Dimensions } from 'react-native';
+import { View, Text, Image, FlatList, RefreshControl, Dimensions, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
+import DeleteButton from '../../components/CustomDeletePostButton'; // Import DeleteButton
 import { db, auth } from '../../firebase.config';
-import { doc, getDocs, collection, getDoc } from "firebase/firestore";
+import { doc, getDocs, collection, getDoc, deleteDoc } from "firebase/firestore"; // Import deleteDoc
 import CommentSection from '../../components/Comments';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -46,7 +47,7 @@ const Success = () => {
 
       const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists) {
+      if (docSnap.exists()) {
         const data = docSnap.data();
         setShelterData(data);
       } else {
@@ -62,6 +63,16 @@ const Success = () => {
     await fetchSuccess();
     await fetchShelterData();
     setRefreshing(false);
+  };
+
+  const handleDelete = async (postId) => {
+    try {
+      await deleteDoc(doc(db, 'success', postId));
+      setSuccess(prevSuccess => prevSuccess.filter(item => item.id !== postId));
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      Alert.alert('Error deleting post. Please try again.');
+    }
   };
 
   const formatDate = (timestamp) => {
@@ -102,14 +113,25 @@ const Success = () => {
   const renderItem = ({ item }) => (
     <View key={item.id} className="bg-white mt-4">
       <View className='justify-start items-start mt-2'>
-        <View className='flex-row justify-center items-center ml-2'>
-          <Image
-            source={{ uri: item.data.profilePicture }}
-            style={{ width: 40, height: 40, resizeMode: 'contain', borderRadius: 20 }}
+        <View className='flex-row justify-between items-center ml-2'>
+          <View className='flex-row items-center'>
+            <Image
+              source={{ uri: item.data.profilePicture }}
+              style={{ width: 40, height: 40, resizeMode: 'contain', borderRadius: 20 }}
+            />
+            <Text className='text-turqoise font-pbold text-lg ml-2'>
+              {item.data.username}
+            </Text>
+          </View>
+
+          <DeleteButton
+            collectionName="success"
+            docId={item.id}
+            containerStyles="bg-red ml-2 w-20"
+            textStyles="text-white font-pbold"
+            isLoading={false}
+            handleDelete={() => handleDelete(item.id)} // Add handleDelete function
           />
-          <Text className='text-turqoise font-pbold text-lg ml-2'>
-            {item.data.username}
-          </Text>
         </View>
         <View className='mt-2 mb-2'>
           <Image
@@ -125,11 +147,11 @@ const Success = () => {
         <View className='ml-2 mb-2'>
           <LikeButton postId={item.id} collectionName={"success"} initialLikes={(item.data.likedBy && item.data.likedBy.length) || 0} />
         </View>
-        <View className='flex justify-start flex-row ml-2 items-center'>
+        <View className='ml-2 mb-2'>
           <Text className='text-turqoise font-pbold text-lg'>
             {item.data.username}
           </Text>
-          <Text className='text-darkBrown font-pregular text-md ml-3'>
+          <Text className='text-darkBrown font-pregular text-md ml-3 flex-wrap' style={{ maxWidth: screenWidth - 32 }}>
             {item.data.caption}
           </Text>
         </View>

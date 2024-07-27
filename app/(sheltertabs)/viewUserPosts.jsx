@@ -26,13 +26,13 @@ const viewUserPosts = () => {
         id: doc.id,
         data: doc.data(),
       }));
-  
+
       postsData.sort((a, b) => {
         const dateA = a.data.createdAt.toDate(); 
         const dateB = b.data.createdAt.toDate(); 
         return dateB - dateA; 
       });
-  
+
       setPosts(postsData);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -111,6 +111,7 @@ const viewUserPosts = () => {
                   />
                   <TouchableOpacity
                     onPress={() => router.push({ pathname: 'userProfile', params: { userId: post.data.userId } })}
+                    className={` rounded-xl min-h-[62px] justify-center items-center`}
                   >
                     <Text className="text-turqoise font-pbold text-lg ml-2">
                       {post.data.username}
@@ -134,7 +135,7 @@ const viewUserPosts = () => {
                   <LikeButton postId={post.id} collectionName={"posts"} initialLikes={(post.data.likedBy && post.data.likedBy.length) || 0} />
                 </View>
 
-                <View className="flex flex-row ml-2 items-center mb-2">
+                <View className="ml-2 mb-2">
                   <TouchableOpacity
                     onPress={() => router.push({ pathname: 'userProfile', params: { userId: post.data.userId } })}
                   >
@@ -142,12 +143,12 @@ const viewUserPosts = () => {
                       {post.data.username}
                     </Text>
                   </TouchableOpacity>
-                  <Text className="text-darkBrown font-pregular text-lg ml-3">
+                  <Text className="text-darkBrown font-pregular text-lg ml-3 flex-wrap" style={{ maxWidth: screenWidth - 32 }}>
                     {post.data.caption}
                   </Text>
                 </View>
                 <Text className="text-darkBrown font-pregular text-xs ml-2 mb-2">
-                    Posted on: {formatDate(post.data.createdAt)}
+                  Posted on: {formatDate(post.data.createdAt)}
                 </Text>
               </View>
             </View>

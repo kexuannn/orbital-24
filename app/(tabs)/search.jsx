@@ -281,11 +281,11 @@ const Search = () => {
                   </TouchableOpacity>
                 </View>
 
-                <View className="flex flex-row ml-2 items-center mb-2">
-                  <Text className="text-turqoise font-pbold text-lg">
+                <View className='ml-2 mb-2'>
+                  <Text className='text-turqoise font-pbold text-lg'>
                     {fd.username}
                   </Text>
-                  <Text className="text-darkBrown font-pregular text-lg ml-3">
+                  <Text className='text-darkBrown font-pregular text-md ml-3 flex-wrap' style={{ maxWidth: screenWidth - 32 }}>
                     {fd.caption}
                   </Text>
                 </View>

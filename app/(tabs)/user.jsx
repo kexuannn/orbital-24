@@ -11,7 +11,7 @@ import EmailButton from '../../components/EmailButton';
 import ImageViewer from '../../components/ImageViewer';
 import { db, auth, storage } from '../../firebase.config';
 import { icons } from '../../constants';
-import { doc, setDoc, getDoc, collection } from "firebase/firestore";
+import { doc, setDoc, getDoc, deleteDoc, collection } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const User = () => {
@@ -145,7 +145,48 @@ const User = () => {
       setIsSubmitting(false);
     }
   };
+  const deleteProfile = async () => {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        // Delete profile picture from storage if it exists
+        if (profile.profilePicture) {
+          const fileRef = ref(storage, profile.profilePicture);
+          await deleteObject(fileRef);
+        }
+  
+        // Delete user data from Firestore
+        const userDocRef = doc(collection(db, "users"), user.uid);
+        await deleteDoc(userDocRef);
+  
+        // Delete user authentication entry
+        await user.delete();
+  
+        console.log('Profile deleted successfully');
+        Alert.alert('Profile deleted successfully!');
+  
+        // Redirect user to a different screen or log them out
+        router.push('/sign-up'); // Adjust the route as needed
+      } else {
+        console.error('User not authenticated');
+      }
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+    }
+  };
 
+  const confirmDeleteProfile = () => {
+    Alert.alert(
+      'Delete Profile',
+      'Are you sure you want to delete your profile? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: deleteProfile },
+      ]
+    );
+  };
+  
+  
   const uploadImageAsync = async (uri) => {
     const response = await fetch(uri);
     const blob = await response.blob();
@@ -253,12 +294,29 @@ const User = () => {
             containerStyles="mt-10 bg-darkBrown p-3 rounded-xl"
           />
 
+        <TouchableOpacity
+          onPress={() => router.push({ pathname: 'viewyourposts', params: { userId: auth.currentUser.uid } })}
+          activeOpacity={0.7}
+          className={`mt-10 bg-darkBrown rounded-xl min-h-[62px] justify-center items-center  `}
+        >
+          <Text className={`text-bgc font-psemibold `}>
+            View your posts
+          </Text>
+        </TouchableOpacity>
+
           <EmailButton
             title="Save Profile"
             handlePress={saveProfile}
             containerStyles="mt-7 bg-turqoise p-3 rounded-xl"
             isLoading={isSubmitting}
           />
+
+          <TouchableOpacity onPress={confirmDeleteProfile} className="mt-7 bg-red p-3 rounded-xl min-h-[62px] justify-center items-center">
+            <Text className="font-pbold text-bgc text-center">Delete Profile</Text>
+          </TouchableOpacity>
+
+
+          
 
         </View>
       </ScrollView>

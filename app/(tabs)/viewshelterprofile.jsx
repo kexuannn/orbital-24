@@ -12,9 +12,9 @@ const ShelterProfile = () => {
   const { userId } = route.params;
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false); // State for the submission process
-  const [userRating, setUserRating] = useState(0); // State for the user rating
-  const [averageRating, setAverageRating] = useState(0); // State for the average rating
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userRating, setUserRating] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -52,13 +52,11 @@ const ShelterProfile = () => {
         const data = userDoc.data();
         const newRatings = data.ratings || { sum: 0, count: 0 };
 
-        // Update the ratings field using increment
         await updateDoc(userDocRef, {
           'ratings.sum': increment(userRating),
           'ratings.count': increment(1),
         });
 
-        // Update local state for the average rating
         const newSum = newRatings.sum + userRating;
         const newCount = newRatings.count + 1;
         const newAverageRating = newSum / newCount;
@@ -118,6 +116,11 @@ const ShelterProfile = () => {
                 <Text className="font-bold">Website: </Text>{userData.website}
               </Text>
 
+              <Text className="text-brown-600 text-lg mb-2">
+                <Text className="font-bold">Description of shelter: </Text>
+                {userData.description || 'No description available'}
+              </Text>
+
               <View className="bg-white p-4 rounded-lg mt-4 items-center">
                 <Text className="text-brown-600 text-lg mb-2">
                   <Text className="font-bold">Average Rating: </Text>{averageRating.toFixed(1)} / 5
@@ -139,7 +142,7 @@ const ShelterProfile = () => {
                   title={isSubmitting ? <ActivityIndicator size="small" color="white" /> : 'Rate!'}
                   handlePress={handleRating}
                   containerStyles="bg-turqoise p-3 rounded mt-4 w-full"
-                  disabled={isSubmitting} // Disable button while submitting
+                  disabled={isSubmitting} 
                 /> 
               </View>
             </View>

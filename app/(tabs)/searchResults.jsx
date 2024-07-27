@@ -217,14 +217,15 @@ const searchResults = () => {
                     </TouchableOpacity>
                   </View>
 
-                  <View className="flex flex-row ml-2 items-center mb-2">
-                    <Text className="text-turqoise font-pbold text-lg">
-                      {result.username}
-                    </Text>
-                    <Text className="text-darkBrown font-pregular text-lg ml-3">
-                      {result.caption}
-                    </Text>
-                  </View>
+                  
+                  <View className='ml-2 mb-2'>
+                  <Text className='text-turqoise font-pbold text-lg'>
+                    {result.username}
+                  </Text>
+                  <Text className='text-darkBrown font-pregular text-md ml-3 flex-wrap' style={{ maxWidth: screenWidth - 32 }}>
+                    {result.caption}
+                  </Text>
+                </View>
                   <Text className="text-darkBrown font-pregular text-xs ml-2">
                     Posted on: {formatDate(result.createdAt)}
                   </Text>

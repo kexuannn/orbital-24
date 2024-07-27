@@ -164,6 +164,15 @@ const TabsLayout = () => {
         />
 
         <Tabs.Screen
+          name='viewyourposts'
+          options={{
+            title: 'viewyourposts',
+            href: null,
+            headerShown: false,
+          }}
+        />
+
+        <Tabs.Screen
           name='viewsuccess'
           options={{
             title: 'viewsuccess',

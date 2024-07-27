@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Image, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { onSnapshot, doc, collection } from "firebase/firestore";
+import { onSnapshot, doc, collection, deleteDoc } from "firebase/firestore";
 import { db, auth } from '../../firebase.config';
 import HorizontalBar from '../../components/CustomHorizontalBar';
 import LikeButton from '../../components/CustomLikeButton';
+import DeleteButton from '../../components/CustomDeletePostButton'; // Import the DeleteButton component
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -20,7 +21,7 @@ const Fundraising = () => {
         const fundraisingData = snapshot.docs.map((doc) => ({
           id: doc.id,
           data: doc.data()
-        })).filter((pet) => pet.data.userId === auth.currentUser.uid);
+        })).filter((fundr) => fundr.data.userId === auth.currentUser.uid);
 
         // Sort by createdAt in descending order
         const sortedData = fundraisingData.sort((a, b) => 
@@ -40,7 +41,6 @@ const Fundraising = () => {
     const user = auth.currentUser;
     if (user) {
       const shelterDocRef = doc(db, 'shelters', user.uid);
-
 
       const unsubscribe = onSnapshot(shelterDocRef, (docSnap) => {
         if (docSnap.exists()) {
@@ -85,7 +85,17 @@ const Fundraising = () => {
     return 'No Date'; 
   };
 
-  
+  const deleteFundraising = async (fundrId) => {
+    try {
+      await deleteDoc(doc(db, 'fundraising', fundrId));
+      setFundraising((prevFundraising) => 
+        prevFundraising.filter((fundr) => fundr.id !== fundrId)
+      );
+    } catch (error) {
+      console.error('Error deleting fundraising post:', error);
+      Alert.alert('Error deleting post. Please try again.');
+    }
+  };
 
   const navigationData = [
     {
@@ -123,36 +133,46 @@ const Fundraising = () => {
           {fundraising.map((fundr) => (
             <View key={fundr.id} className="bg-white mt-4">
               <View className='justify-start items-start mt-2'>
-                <View className='flex-row justify-center items-center ml-2 '>
-                  <Image
-                    source={{ uri: fundr.data.profilePicture }}
-                    style={{ width: 40, height: 40, resizeMode: 'contain', borderRadius: 20 }}
+                <View className='flex-row justify-between items-center ml-2'>
+                  <View className='flex-row items-center'>
+                    <Image
+                      source={{ uri: fundr.data.profilePicture }}
+                      style={{ width: 40, height: 40, resizeMode: 'contain', borderRadius: 20 }}
+                    />
+                    <Text className='text-turqoise font-pbold text-lg ml-2'>
+                      {fundr.data.username}
+                    </Text>
+                  </View>
+                  
+                  <DeleteButton
+                    collectionName="fundraising" // Set collection name for delete
+                    docId={fundr.id} // Pass the document ID
+                    containerStyles="bg-red ml-2 w-20" 
+                    textStyles="text-white font-pbold"
+                    isLoading={false} 
+                    handlePress={() => deleteFundraising(fundr.id)} // Add handlePress for delete
                   />
-                  <Text className='text-turqoise font-pbold text-lg ml-2 '>
-                    {fundr.data.username}
-                  </Text>
                 </View>
+
                 <View className='mt-2 mb-2'>
                   <Image
                     source={{ uri: fundr.data.imageUrl }}
                     style={{
-                    width: screenWidth - 32, // Width of the screen minus padding
-                    height: (screenWidth - 32), // Maintain aspect ratio
-                    resizeMode: 'cover',
-                    marginVertical: 10,
+                      width: screenWidth - 32, // Width of the screen minus padding
+                      height: (screenWidth - 32), // Maintain aspect ratio
+                      resizeMode: 'cover',
+                      marginVertical: 10,
                     }}
                   />
                 </View>
-
                 <View className='ml-2 mb-2'>
                   <LikeButton postId={fundr.id} collectionName={"fundraising"} initialLikes={(fundr.data.likedBy && fundr.data.likedBy.length) || 0} />
                 </View>
-
-                <View className='flex flex-row ml-2 items-center mb-2'>
+                <View className='ml-2 mb-2'>
                   <Text className='text-turqoise font-pbold text-lg'>
                     {fundr.data.username}
                   </Text>
-                  <Text className='text-darkBrown font-pregular text-lg ml-3'>
+                  <Text style={{ color: '#5C4033', fontFamily: 'pregular', fontSize: 16, flexWrap: 'wrap', maxWidth: screenWidth - 32, marginTop: 4 }}>
                     {fundr.data.caption}
                   </Text>
                 </View>

@@ -171,18 +171,11 @@ const Home = () => {
                   <LikeButton postId={post.id} collectionName={"posts"} initialLikes={(post.data.likedBy && post.data.likedBy.length) || 0} />
                 </View>
 
-                <View className="flex flex-row ml-2 items-center">
-                  <Text className="text-turqoise font-pbold text-lg">
+                <View className='ml-2 mb-2'>
+                  <Text className='text-turqoise font-pbold text-lg'>
                     {post.data.username}
                   </Text>
-                  <Text
-                    className="text-darkBrown font-pregular text-medium ml-3"
-                    style={{
-                      flex: 1,
-                      flexWrap: 'wrap',
-                      maxWidth: screenWidth - 32,
-                    }}
-                  >
+                  <Text className='text-darkBrown font-pregular text-md ml-3 flex-wrap' style={{ maxWidth: screenWidth - 32 }}>
                     {post.data.caption}
                   </Text>
                 </View>

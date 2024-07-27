@@ -3,9 +3,8 @@ import MapView, { Marker, Callout } from 'react-native-maps';
 import { View, Text } from 'react-native';
 import axios from 'axios';
 import * as Location from 'expo-location';
-import { db } from '../../firebase.config'; 
+import { db } from '../../firebase.config';
 import { collection, getDocs } from 'firebase/firestore';
-
 
 const NOMINATIM_USER_AGENT = 'PawsConnect/1.0 (lee.minrui1@gmail.com)';
 
@@ -74,12 +73,12 @@ const MapScreen = () => {
 
   return (
     <View className="w-full h-full flex-1 bg-bgc">
-        <View className="items-center justify-center">
-            <Text className="text-turqoise font-gb mt-14 text-5xl">
-              Map of shelters
-            </Text>
-          </View>
-    
+      <View className="items-center justify-center">
+        <Text className="text-turqoise font-gb mt-14 text-5xl">
+          Map of shelters
+        </Text>
+      </View>
+
       <MapView
         className="w-full h-full"
         initialRegion={{
@@ -100,10 +99,17 @@ const MapScreen = () => {
               title={shelter.username}
               description={shelter.address}
             >
-              <Callout className="bg-white p-2 rounded-lg">
-                <View className="items-center">
-                  <Text className="text-lg font-pbold">{shelter.username}</Text>
-                  <Text className="text-sm font-pmedium text-gray-600">{shelter.address}</Text>
+              <Callout>
+                <View className="w-60 p-3 bg-white rounded-lg">
+                  <Text className="text-lg font-bold">{shelter.username}</Text>
+                  <Text className="text-sm text-gray-600 mb-2">{shelter.address}</Text>
+                  <Text className="text-sm mb-2">{shelter.description || 'No description available'}</Text>
+                  <Text className="text-sm font-bold">
+                    {shelter.ratings && shelter.ratings.count > 0
+                      ? `Rating: ${(shelter.ratings.sum / shelter.ratings.count).toFixed(1)}`
+                      : 'No rating available'}
+                  </Text>
+
                 </View>
               </Callout>
             </Marker>
@@ -118,8 +124,8 @@ const MapScreen = () => {
             title="Your Location"
             pinColor="blue"
           >
-            <Callout className="bg-white p-2 rounded-lg">
-              <View className="flex-row items-center">
+            <Callout>
+              <View className="w-60 p-3 bg-white rounded-lg">
                 <Text className="text-lg font-bold">Your Location</Text>
               </View>
             </Callout>
