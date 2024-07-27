@@ -182,7 +182,7 @@ const ViewHome = () => {
         }
       >
         <View className="w-full h-full justify-start px-4 py-10 ">
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View className='flex-row items-center'>
             <BackButton 
               containerStyles="p-3 rounded-xl mb-4" 
               textStyles="text-turqoise" 
@@ -190,7 +190,6 @@ const ViewHome = () => {
             <View className="flex-1 items-center">
               <TouchableOpacity
                 onPress={() => router.push({ pathname: 'viewshelterprofile', params: { userId: id } })}
-                className="flex-row justify-center"
               >
                 <Text className="text-turqoise font-gb text-5xl text-center mr-12">
                   {shelterData?.username}
@@ -219,7 +218,7 @@ const ViewHome = () => {
                   </Text>
                 </View>
 
-                <View className="mt-2 mb-2">
+                <View className="mb-2">
                   <Image
                     source={{ uri: p.data.imageUrl }}
                     style={{

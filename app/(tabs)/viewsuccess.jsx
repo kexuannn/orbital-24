@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, RefreshControl, FlatList, Dimensions } from 'react-native';
+import { View, Text, Image, RefreshControl, FlatList, Dimensions, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import HorizontalBar from '../../components/CustomHorizontalBar';
@@ -9,6 +9,7 @@ import { useRoute } from '@react-navigation/native';
 import BackButton from '../../components/CustomBackButton';
 import LikeButton from '../../components/CustomLikeButton';
 import CommentSection from '../../components/Comments';
+import { useRouter } from 'expo-router';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -107,7 +108,7 @@ const viewSuccess = () => {
           </Text>
         </View>
 
-        <View className="mt-2 mb-2">
+        <View className="mb-2">
           <Image
             source={{ uri: item.data.imageUrl }}
             style={{
@@ -141,15 +142,19 @@ const viewSuccess = () => {
 
   const renderHeader = () => (
     <View>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <BackButton
-          containerStyles="p-3 rounded-xl mb-4"
-          textStyles="text-turqoise"
-        />
-        <Text className="pl-20 pb-18 text-turqoise font-gb mt-4 text-5xl mb-4">
-          {shelterData?.username}
-        </Text>
-      </View>
+      <View className='flex-row items-center'>
+            <BackButton 
+              containerStyles="p-3 rounded-xl mb-4" 
+              textStyles="text-turqoise" 
+            />
+            <View className="flex-1 items-center">
+            
+                <Text className="text-turqoise font-gb text-5xl text-center mr-12">
+                  {shelterData?.username}
+                </Text>
+              
+            </View>
+          </View>
       <HorizontalBar data={navigationData} optionalParameter={optionalParameter} />
     </View>
   );
@@ -164,7 +169,13 @@ const viewSuccess = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListHeaderComponent={renderHeader}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 10 }}
+        contentContainerStyle={{ 
+          width: '100%', 
+          height: '100%', 
+          justifyContent: 'flex-start', 
+          paddingHorizontal: 16, 
+          paddingVertical: 40 
+        }}
       />
     </SafeAreaView>
   );

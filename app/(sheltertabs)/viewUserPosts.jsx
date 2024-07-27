@@ -97,29 +97,30 @@ const viewUserPosts = () => {
           <HorizontalBar data={navigationData} />
 
           {posts.map((post) => (
-            <View key={post.id} className="bg-white mt-2">
+            <View key={post.id} className="bg-white mt-4 flex-1">
               <View className="justify-start items-start mt-2">
-                <View className="flex-row justify-center items-center ml-2">
-                  <Image
-                    source={{ uri: post.data.profilePicture }}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      resizeMode: 'contain',
-                      borderRadius: 20,
-                    }}
-                  />
-                  <TouchableOpacity
-                    onPress={() => router.push({ pathname: 'userProfile', params: { userId: post.data.userId } })}
-                    className={` rounded-xl min-h-[62px] justify-center items-center`}
-                  >
-                    <Text className="text-turqoise font-pbold text-lg ml-2">
-                      {post.data.username}
-                    </Text>
-                  </TouchableOpacity>
+                <View className="flex-row justify-between items-center ml-2">
+                  <View className="flex-row items-center">
+                    <Image
+                      source={{ uri: post.data.profilePicture }}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        resizeMode: 'contain',
+                        borderRadius: 20,
+                      }}
+                    />
+                    <TouchableOpacity
+                      onPress={() => router.push({ pathname: 'userProfile', params: { userId: post.data.userId } })}
+                    >
+                      <Text className="text-turqoise font-pbold text-lg ml-2">
+                        {post.data.username}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
 
-                <View className='mt-2 mb-2'>
+                <View className='mb-2'>
                   <Image
                     source={{ uri: post.data.imageUrl }}
                     style={{

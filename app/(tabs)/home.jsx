@@ -155,7 +155,7 @@ const Home = () => {
                   </Text>
                 </View>
 
-                <View className= 'mt-2 mb-2'>
+                <View className= 'mb-2'>
                   <Image
                     source={{ uri: post.data.imageUrl }}
                     style={{

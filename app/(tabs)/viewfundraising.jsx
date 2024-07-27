@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, RefreshControl, Dimensions } from 'react-native';
+import { View, Text, ScrollView, Image, RefreshControl, Dimensions, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import HorizontalBar from '../../components/CustomHorizontalBar';
@@ -8,6 +8,7 @@ import { doc, getDocs, collection, getDoc } from 'firebase/firestore';
 import { useRoute } from '@react-navigation/native';
 import LikeButton from '../../components/CustomLikeButton';
 import BackButton from '../../components/CustomBackButton';
+import { useRouter } from 'expo-router';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -112,14 +113,18 @@ const viewFundraising = () => {
         }
       >
         <View className="w-full h-full justify-start px-4 py-10">
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View className='flex-row items-center'>
             <BackButton 
               containerStyles="p-3 rounded-xl mb-4" 
               textStyles="text-turqoise" 
             />
-            <Text className="pl-20 pb-18 text-turqoise font-gb mt-4 text-5xl mb-4">
-              {shelterData?.username}
-            </Text>
+            <View className="flex-1 items-center">
+            
+                <Text className="text-turqoise font-gb text-5xl text-center mr-12">
+                  {shelterData?.username}
+                </Text>
+            
+            </View>
           </View>
 
           <HorizontalBar data={navigationData} optionalParameter={optionalParameter}/>
@@ -142,7 +147,7 @@ const viewFundraising = () => {
                   </Text>
                 </View>
 
-                <View className="mt-2 mb-2">
+                <View className="mb-2">
                   <Image
                     source={{ uri: fund.data.imageUrl }}
                     style={{

@@ -133,7 +133,7 @@ const Success = () => {
             handleDelete={() => handleDelete(item.id)} // Add handleDelete function
           />
         </View>
-        <View className='mt-2 mb-2'>
+        <View className='mb-2'>
           <Image
             source={{ uri: item.data.imageUrl }}
             style={{
@@ -186,7 +186,14 @@ const Success = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListHeaderComponent={renderHeader}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 10 }}
+        contentContainerStyle={{ 
+          width: '100%', 
+          height: '100%', 
+          justifyContent: 'flex-start', 
+          paddingHorizontal: 16, 
+          paddingVertical: 40 
+        }}
+        
       />
     </SafeAreaView>
   );

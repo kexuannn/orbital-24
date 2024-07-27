@@ -154,7 +154,7 @@ const Fundraising = () => {
                   />
                 </View>
 
-                <View className='mt-2 mb-2'>
+                <View className='mb-2'>
                   <Image
                     source={{ uri: fundr.data.imageUrl }}
                     style={{

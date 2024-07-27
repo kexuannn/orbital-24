@@ -192,7 +192,7 @@ const PetListing = () => {
                   />
                 </View>
 
-                <View className="mt-2 mb-1">
+                <View className="mb-1">
                   <Image
                     source={{ uri: p.data.imageUrl }}
                     style={{
