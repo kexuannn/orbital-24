@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router';
 
 const { width: screenWidth } = Dimensions.get('window');
 
-const viewSuccess = () => {
+const ViewSuccess = () => {
   const route = useRoute();
   const { optionalParameter } = route.params;
 
@@ -112,29 +112,29 @@ const viewSuccess = () => {
           <Image
             source={{ uri: item.data.imageUrl }}
             style={{
-            width: screenWidth - 32, // Width of the screen minus padding
-            height: (screenWidth - 32), // Maintain aspect ratio
-            resizeMode: 'cover',
-            marginVertical: 10,
+              width: screenWidth - 32, // Width of the screen minus padding
+              height: screenWidth - 32, // Maintain aspect ratio
+              resizeMode: 'cover',
+              marginVertical: 10,
             }}
           />
         </View>
 
-        <View className='ml-2 mb-2'>
-          <LikeButton postId={item.id} collectionName={"success"} initialLikes={(item.data.likedBy && item.data.likedBy.length) || 0} />
+        <View className="ml-2 mb-2">
+          <LikeButton postId={item.id} collectionName="success" initialLikes={(item.data.likedBy && item.data.likedBy.length) || 0} />
         </View>
 
-        <View className="flex flex-row ml-2 items-center mb-2">
+        <View className="ml-2 mb-2">
           <Text className="text-turqoise font-pbold text-lg">
             {item.data.username}
           </Text>
-          <Text className="text-darkBrown font-pregular text-reg ml-3">
+          <Text className="text-darkBrown font-pregular text-md ml-3 flex-wrap" style={{ maxWidth: screenWidth - 32 }}>
             {item.data.caption}
           </Text>
         </View>
       </View>
 
-      <View className='mb-4'>
+      <View className="mb-4">
         <CommentSection postId={item.id} />
       </View>
     </View>
@@ -142,25 +142,23 @@ const viewSuccess = () => {
 
   const renderHeader = () => (
     <View>
-      <View className='flex-row items-center'>
-            <BackButton 
-              containerStyles="p-3 rounded-xl mb-4" 
-              textStyles="text-turqoise" 
-            />
-            <View className="flex-1 items-center">
-            
-                <Text className="text-turqoise font-gb text-5xl text-center mr-12">
-                  {shelterData?.username}
-                </Text>
-              
-            </View>
-          </View>
+      <View className="flex-row items-center">
+        <BackButton 
+          containerStyles="p-3 rounded-xl mb-4" 
+          textStyles="text-turqoise" 
+        />
+        <View className="flex-1 items-center">
+          <Text className="text-turqoise font-gb text-5xl text-center mr-12">
+            {shelterData?.username}
+          </Text>
+        </View>
+      </View>
       <HorizontalBar data={navigationData} optionalParameter={optionalParameter} />
     </View>
   );
 
   return (
-    <SafeAreaView className="bg-bgc h-full">
+    <SafeAreaView className="bg-bgc flex-1">
       <FlatList
         data={success}
         renderItem={renderItem}
@@ -170,15 +168,13 @@ const viewSuccess = () => {
         }
         ListHeaderComponent={renderHeader}
         contentContainerStyle={{ 
-          width: '100%', 
-          height: '100%', 
-          justifyContent: 'flex-start', 
           paddingHorizontal: 16, 
-          paddingVertical: 40 
+          paddingBottom: 20, 
+          paddingTop: 40
         }}
       />
     </SafeAreaView>
   );
 };
 
-export default viewSuccess;
+export default ViewSuccess;

@@ -163,11 +163,11 @@ const viewFundraising = () => {
                   <LikeButton postId={fund.id} collectionName={"fundraising"} initialLikes={(fund.data.likedBy && fund.data.likedBy.length) || 0} />
                 </View>
 
-                <View className="flex flex-row ml-2 items-center mb-2">
-                  <Text className="text-turqoise font-pbold text-lg">
+                <View className='ml-2 mb-2'>
+                  <Text className='text-turqoise font-pbold text-lg'>
                     {fund.data.username}
                   </Text>
-                  <Text className="text-darkBrown font-pregular text-lg ml-3">
+                  <Text className='text-darkBrown font-pregular text-md ml-3 flex-wrap' style={{ maxWidth: screenWidth - 32 }}>
                     {fund.data.caption}
                   </Text>
                 </View>
