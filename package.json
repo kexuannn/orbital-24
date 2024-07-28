@@ -8,11 +8,26 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest --watchAll",
+    "test": "jest",
     "lint": "expo lint"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|firebase/auth|expo-router|react-native|react|@firebase)"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react",
+      "@babel/preset-typescript"
+    ],
+    "plugins": [
+      "@babel/plugin-transform-class-properties",
+      "@babel/plugin-transform-private-methods",
+      "@babel/plugin-transform-private-property-in-object"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
@@ -54,15 +69,19 @@
     "stripe": "^16.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
+    "@babel/core": "^7.24.9",
+    "@babel/preset-env": "^7.25.0",
+    "@babel/preset-react": "^7.24.7",
+    "@babel/preset-typescript": "^7.24.7",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.2.45",
     "@types/react-native": "^0.73.0",
     "@types/react-test-renderer": "^18.0.7",
+    "babel-jest": "^29.7.0",
     "expo-cli": "^6.3.10",
-    "jest": "^29.2.1",
+    "jest": "^29.7.0",
     "jest-expo": "~51.0.2",
-    "react-test-renderer": "18.2.0",
+    "react-test-renderer": "^18.2.0",
     "tailwindcss": "^3.3.2",
     "typescript": "~5.3.3"
   },
