@@ -1,31 +1,31 @@
 {
   "build": {
-    "development": {
-      "distribution": "internal",
+    "preview": {
       "android": {
         "buildType": "apk"
-      },
-      "ios": {
-        "simulator": true
       }
     },
-    "preview": {
-      "distribution": "internal",
+    "preview2": {
       "android": {
-        "buildType": "app-bundle"
-      },
-      "ios": {
-        "simulator": false
+        "gradleCommand": ":app:assembleRelease"
       }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "preview4": {
+      "distribution": "internal"
     },
     "production": {
-      "distribution": "store",
-      "android": {
-        "buildType": "app-bundle"
-      },
-      "ios": {
-        "simulator": false
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.production.com"
+      }
+    },
+    "test": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.test.com"
       }
     }
   }
 }
+

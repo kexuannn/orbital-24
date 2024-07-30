@@ -1,8 +1,8 @@
 import { View, Text, ScrollView, Image, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Redirect, router, Link } from 'expo-router'
-import { getAuth, signInWithEmailAndPassword} from 'firebase/auth'
+import { router, Link } from 'expo-router'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 
 import { images } from "../../constants";
 import FormField from '../../components/FormField';

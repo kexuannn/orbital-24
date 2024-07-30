@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "PawsConnect",
+    "scheme": ["pawsconnect"],
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -39,13 +39,16 @@
       "typedRoutes": true
     },
     "extra": {
+      "expoRouterAppRoot": "src",
+      
       "router": {
         "origin": false
       },
+      
       "eas": {
         "projectId": "6b14b6a6-cbac-4f24-9f2b-e1df16a1ff96"
       }
     },
-    "owner": "kexxx"
+    "owner": "pawsconnect"
   }
 }
