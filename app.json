@@ -39,8 +39,9 @@
       "typedRoutes": true
     },
     "extra": {
-      "expoRouterAppRoot": "src",
-      
+      "expoRouterAppRoot": "./app",
+      "expoRouterImportMode": "sync",
+
       "router": {
         "origin": false
       },

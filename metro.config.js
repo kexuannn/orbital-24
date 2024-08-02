@@ -9,12 +9,15 @@ module.exports = (async () => {
     ...defaultConfig,
     resolver: {
       ...defaultConfig.resolver,
+      
       // Add any additional extensions if needed
       sourceExts: [...defaultConfig.resolver.sourceExts, 'cjs']
     },
     transformer: {
       ...defaultConfig.transformer,
+      babelTransformerPath: require.resolve('nativewind/babel'),
       // Customize transformer options if needed
+      asyncTransform: true
     },
   };
 })();
