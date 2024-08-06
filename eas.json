@@ -16,16 +16,6 @@
     "preview4": {
       "distribution": "internal"
     },
-    "production": {
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.production.com"
-      }
-    },
-    "test": {
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.test.com"
-      }
-    }
+    "production": {}
   }
 }
-

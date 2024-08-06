@@ -5,6 +5,7 @@ module.exports = function(api) {
       '@babel/preset-env',
       '@babel/preset-react',
       '@babel/preset-typescript',
+      "module:metro-react-native-babel-preset",
   ],
     plugins: [
       // Other plugins
@@ -13,6 +14,7 @@ module.exports = function(api) {
       "@babel/plugin-transform-class-properties",
       "@babel/plugin-transform-private-methods",
       "@babel/plugin-transform-private-property-in-object",
+      "@babel/plugin-transform-modules-commonjs",
     ],
   };
 };
